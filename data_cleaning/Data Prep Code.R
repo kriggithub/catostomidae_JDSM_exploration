@@ -51,7 +51,7 @@ chemical_data$VISIT_NO <- as.character(chemical_data$VISIT_NO) # To join properl
 reference_table <- habitat_data %>% 
   inner_join(chemical_data, by =c("UID")) %>%
   filter(VISIT_NO.x == "1" & AG_ECO9.x %in% c("SAP", "NAP")) %>%
-  inner_join(environmental_data, by = c("SITE_ID.x" = "SITE_ID")) %>%
+  inner_join(environmental_table, by = c("SITE_ID.x" = "SITE_ID")) %>%
   select(SITE_ID = SITE_ID.x, AG_ECO9 = AG_ECO9.x, ecoregion_3, total_N = NTL_RESULT, total_P = PTL_RESULT, 
          chloride = CHLORIDE_RESULT, sulfate = SULFATE_RESULT, ANC = ANC_RESULT, DOC = DOC_RESULT, 
          turbidity = TURB_RESULT, RDI = W1_HALL, pct_fine = PCT_FN) %>%
@@ -70,4 +70,6 @@ reference_table <- habitat_data %>%
 
 ####Step 5: Check the distribution of reference and validation sites by aggregated ecoregion 
 table(reference_table$ref_cond, reference_table$val_cond, reference_table$AG_ECO9)
+
+
 
