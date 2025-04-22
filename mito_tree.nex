@@ -1,0 +1,189 @@
+#NEXUS
+[R-package APE, Mon Apr 21 22:49:47 2025]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX = 88;
+	TAXLABELS
+		Myxocyprinus asiaticus
+		Cycleptus elongatus
+		Ictiobus bubalus
+		Ictiobus cyprinellus
+		Ictiobus niger
+		Carpiodes carpio
+		Carpiodes cyprinus
+		Carpiodes velifer
+		Catostomus ardens
+		Catostomus bernardini
+		Catostomus cahita
+		Catostomus columbianus
+		Catostomus commersoni
+		Catostomus fumeiventris
+		Catostomus leopoldi
+		Catostomus macrocheilus
+		Catostomus occidentalis
+		Catostomus tahoensis
+		Catostomus tsiltcoosensis
+		Catostomus warnerensis
+		Catostomus wigginsi
+		Chasmistes brevirostris
+		Deltistes luxatus
+		Pantosteus bondi
+		Pantosteus nebuliferus
+		Pantosteus plebeius
+		Xyrauchen texanus
+		Hypentelium etowanum
+		Hypentelium nigricans
+		Hypentelium roanokense
+		Vexillichthys atripinnis
+		Moxostoma congestum
+		Moxostoma duquesnii
+		Moxostoma erythrurum
+		Moxostoma pisolabrum
+		Moxostoma poecilurum
+		Moxostoma rupiscartes
+		Erimyzon claviformis
+		Erimyzon oblongus
+		Erimyzon sucetta
+		Erimyzon tenuis
+		Minytrema melanops
+		Acantopsis dialuzona
+		Acheilognathus typus
+		Alburnus alburnus
+		Aphyocypris chinensis
+		Barbatula toni
+		Barbonymus gonionotus
+		Barbus barbus
+		Chanos chanos
+		Chromobotia macracanthus
+		Cobitis striata
+		Crossostoma lacustre
+		Cyprinus carpio
+		Danio rerio
+		Enteriomius trimaculatus
+		Esomus metallicus
+		Gila conspersa
+		Gnathopogon elongatus
+		Gobio gobio
+		Gymnocypris przewalskii
+		Gyrinocheilus aymonieri
+		Hemibarbus labeo
+		Homaloptera leonardi
+		Ischikauia steenackeri
+		Labeo bata
+		Labeo batesii
+		Labeo senegalensis
+		Lefua echigonia
+		Leptobotia mantschurica
+		Misgurnus nikolskyi
+		Mylocheilus caurinus
+		Nipponocypris sieboldii
+		Opsariichthys uncirostris
+		Pangio anguillaris
+		Paralaubuca typus
+		Pelecus cultratus
+		Pethia ticto
+		Phenacogrammus interruptus
+		Pseudaspius nakamurai
+		Pseudogobio esocinus
+		Pseudorasbora pumila
+		Pungtungia herzi
+		Rhodeus ocellatus
+		Schistura balteata
+		Tachysurus tokiensis
+		Tinca tinca
+		Vaillantella maassi
+	;
+END;
+BEGIN TREES;
+	TRANSLATE
+		1	Myxocyprinus asiaticus,
+		2	Cycleptus elongatus,
+		3	Ictiobus bubalus,
+		4	Ictiobus cyprinellus,
+		5	Ictiobus niger,
+		6	Carpiodes carpio,
+		7	Carpiodes cyprinus,
+		8	Carpiodes velifer,
+		9	Catostomus ardens,
+		10	Catostomus bernardini,
+		11	Catostomus cahita,
+		12	Catostomus columbianus,
+		13	Catostomus commersoni,
+		14	Catostomus fumeiventris,
+		15	Catostomus leopoldi,
+		16	Catostomus macrocheilus,
+		17	Catostomus occidentalis,
+		18	Catostomus tahoensis,
+		19	Catostomus tsiltcoosensis,
+		20	Catostomus warnerensis,
+		21	Catostomus wigginsi,
+		22	Chasmistes brevirostris,
+		23	Deltistes luxatus,
+		24	Pantosteus bondi,
+		25	Pantosteus nebuliferus,
+		26	Pantosteus plebeius,
+		27	Xyrauchen texanus,
+		28	Hypentelium etowanum,
+		29	Hypentelium nigricans,
+		30	Hypentelium roanokense,
+		31	Vexillichthys atripinnis,
+		32	Moxostoma congestum,
+		33	Moxostoma duquesnii,
+		34	Moxostoma erythrurum,
+		35	Moxostoma pisolabrum,
+		36	Moxostoma poecilurum,
+		37	Moxostoma rupiscartes,
+		38	Erimyzon claviformis,
+		39	Erimyzon oblongus,
+		40	Erimyzon sucetta,
+		41	Erimyzon tenuis,
+		42	Minytrema melanops,
+		43	Acantopsis dialuzona,
+		44	Acheilognathus typus,
+		45	Alburnus alburnus,
+		46	Aphyocypris chinensis,
+		47	Barbatula toni,
+		48	Barbonymus gonionotus,
+		49	Barbus barbus,
+		50	Chanos chanos,
+		51	Chromobotia macracanthus,
+		52	Cobitis striata,
+		53	Crossostoma lacustre,
+		54	Cyprinus carpio,
+		55	Danio rerio,
+		56	Enteriomius trimaculatus,
+		57	Esomus metallicus,
+		58	Gila conspersa,
+		59	Gnathopogon elongatus,
+		60	Gobio gobio,
+		61	Gymnocypris przewalskii,
+		62	Gyrinocheilus aymonieri,
+		63	Hemibarbus labeo,
+		64	Homaloptera leonardi,
+		65	Ischikauia steenackeri,
+		66	Labeo bata,
+		67	Labeo batesii,
+		68	Labeo senegalensis,
+		69	Lefua echigonia,
+		70	Leptobotia mantschurica,
+		71	Misgurnus nikolskyi,
+		72	Mylocheilus caurinus,
+		73	Nipponocypris sieboldii,
+		74	Opsariichthys uncirostris,
+		75	Pangio anguillaris,
+		76	Paralaubuca typus,
+		77	Pelecus cultratus,
+		78	Pethia ticto,
+		79	Phenacogrammus interruptus,
+		80	Pseudaspius nakamurai,
+		81	Pseudogobio esocinus,
+		82	Pseudorasbora pumila,
+		83	Pungtungia herzi,
+		84	Rhodeus ocellatus,
+		85	Schistura balteata,
+		86	Tachysurus tokiensis,
+		87	Tinca tinca,
+		88	Vaillantella maassi
+	;
+	TREE * UNTITLED = [&U] (((((((((((((((((((((16:0.04889383515,19:0.04985533956):0.006902301882,9:0.05650348294):0.002971939411,12:0.0592078937):0.006189865207,18:0.06956974795):0.03785270357,13:0.1052485826):0.01555320022,(((11:0.05991005502,15:0.06140711432):0.002322093346,10:0.06504777102):0.05610695963,27:0.1192502115):0.002877595271):0.004650608106,21:0.1314827078):0.008688514974,(((22:0.04214762319,23:0.04211062567):0.04287846802,17:0.08324418073):0.03774632192,(14:0.1051134163,20:0.1081657067):0.01743320935):0.01489765245):0.01241628229,((25:0.1278340575,26:0.1236130567):0.004395643791,24:0.126015334):0.03213815705):0.03311864945,(((40:0.1103633357,41:0.1134385668):0.02218960405,(38:0.04083341821,39:0.04126213505):0.09698543644):0.04012731914,42:0.1673395184):0.005318186074):0.001640424583,(((((32:0.1024721973,36:0.09788859677):0.007333714508,33:0.10275433):0.02919362129,(34:0.1258004714,35:0.1264457012):0.008368246083):0.005889458938,37:0.1451623121):0.02421553581,(((29:0.01848154057,30:0.01869209735):0.1181223771,28:0.1350482175):0.02034994472,31:0.1607994339):0.008364675737):0.01893485329):0.01027545474,(((((6:0.05481790106,8:0.05546724346):0.06192488787,7:0.1162304501):0.04226299709,((3:0.03707405973,4:0.03775039922):0.008154832748,5:0.04522855265):0.1094457368):0.01486578589,2:0.1718668229):0.006518919369,1:0.1809212683):0.009532598596):0.02719080616,((((((43:0.192504299,75:0.1934980671):0.005929999568,(52:0.1817608856,71:0.1836521343):0.02792703448):0.009348505851,(53:0.2106743862,64:0.2078309445):0.009837983502):0.0008339014329,((47:0.2152427972,69:0.2074620703):0.003826816193,85:0.2058585817):0.006915742704):0.003627908065,(((51:0.1908695035,70:0.1777091127):0.01005163416,62:0.197489731):0.002957933049,88:0.2154048776):0.002891213863):0.003832454128,((79:0.25066521,86:0.2406213972):0.009107165118,50:0.2432338653):0.01751543127):0.001980333138):0.007503003057,(55:0.2385260761,57:0.2520449228):0.01312641176):0.00228659853,(((((((67:0.1594803267,68:0.1513672721):0.00561751571,66:0.1514948128):0.01156012317,54:0.1636511082):0.004174144581,48:0.1769633681):0.001952118825,49:0.1804064667):0.006392602356,61:0.2086915081):0.009734270418,(56:0.2389551461,78:0.2105778027):0.005230527045):0.00791886204):0.008713672166,(44:0.2073246377,84:0.2112444105):0.01945058343):0.01086276267,(((58:0.1818544648,72:0.1771800444):0.002872671821,(45:0.1802790067,77:0.1674539123):0.004243923192):0.006332478425,80:0.1940457842):0.01444625628):0.001544497023,((((82:0.1774496983,83:0.1753460122):0.01351512207,59:0.1879710541):0.004105631419,(60:0.1845095181,81:0.1817594488):0.004648767079):0.002462191372,63:0.1874321221):0.003788534919):0.002239347944,87:0.1793810702):0.003611239572,46:0.182525336):0.0006160071191,((65:0.1619666002,73:0.1732987683):0.004164997595,74:0.2053387406):0.003011250191,76:0.1868875239);
+END;
