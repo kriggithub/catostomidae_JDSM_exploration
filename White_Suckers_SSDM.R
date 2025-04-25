@@ -14,32 +14,86 @@ reference_dat <- read.csv("reference_table_subset.csv")
 data <- env_dat %>%
   left_join(reference_dat %>% select(SITE_ID, AG_ECO9, ref_cond, val_cond), by = "SITE_ID") %>% 
   left_join(fish_dat, by = "SITE_ID")
+
+# convert elevation from cm to m
+data$elevation <- data$elevation/100
+
   
 # seperate SAP and NAP to visualize
-data_SAP <- data %>%
-  filter(AG_ECO9 == "SAP")
-data_NAP <- data %>%
-  filter(AG_ECO9 == "NAP")
+# data_SAP <- data %>%
+#   filter(AG_ECO9 == "SAP")
+# data_NAP <- data %>%
+#   filter(AG_ECO9 == "NAP")
 
 
-# separate reference sites
+# separate reference sites and model construction
 data_ref <- data %>% 
-  filter(ref_cond == "REF")
+  filter(ref_cond == "REF") %>% 
+  filter(val_cond == "C")
 
 data_ref_whitesuckers <- data_ref %>% 
   filter(WHITE.SUCKER != 0)
 
 
-data_nonref <- data %>% 
-  filter(ref_cond == "NON-REF")
+# data_nonref <- data %>% 
+#   filter(ref_cond == "NON-REF")
 
 
 # Look at location of sites
-mapview(data, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-mapview(data_SAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-mapview(data_NAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+# mapview(data, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+# mapview(data_SAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+# mapview(data_NAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 mapview(data_ref, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 mapview(data_ref_whitesuckers, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+
+
+
+
+# create occurrence dataframe
+data_ref_occurance <- data_ref %>% mutate(across(GOLDEN.REDHORSE:TORRENT.SUCKER, ~ ifelse(. > 0, 1, 0)))
+data_ref <- data_ref %>%
+  mutate(totabundance = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
+data_ref_occurance <- data_ref_occurance %>%
+  mutate(totspecies = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
+
+
+
+
+
+
+# preliminary relationships between abundance, occurance and covariates
+ggplot(data_ref, aes(x = elevation, y = totabundance)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+# elevationlm <- lm(totabundance ~ elevation, data  = data_ref)
+# summary(elevationlm)
+ggplot(data_ref_occurance, aes(x = elevation, y = totspecies)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+ggplot(data_ref, aes(x = ws_precip, y = totabundance)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+
+ggplot(data_ref, aes(x = ws_temp, y = totabundance)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+templm <- lm(totabundance ~ ws_temp, data  = data_ref)
+summary(templm)
+
+
+ggplot(data_ref, aes(x = slope, y = totabundance)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+ggplot(data_ref, aes(x = erod_ws, y = totabundance)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
 
 
 
