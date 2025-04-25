@@ -111,7 +111,7 @@ plotGradient(model.sample, Gradient, pred = predY, measure = "Y", index = 1, sho
 
 
 Gradient2 <- constructGradient(model.sample, focalVariable = "elevation")
-predY2 <- predict(model.sample, Gradient = Gradient2, expected = T)http://127.0.0.1:24229/graphics/plot_zoom_png?width=2528&height=1339
+predY2 <- predict(model.sample, Gradient = Gradient2, expected = T)
 plotGradient(model.sample, Gradient2, pred = predY2, measure = "Y", index = 1, showData = T)
 
 
