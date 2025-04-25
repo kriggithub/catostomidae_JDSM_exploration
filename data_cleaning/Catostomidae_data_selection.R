@@ -9,28 +9,31 @@ library(tidyverse)
 
 
 
+
+
 ####Step 2: Create Trait Dataset
-fb_tables()
-
-
-# ## Get the whole spawning and spawn agg table, joined together:
-# spawn <- left_join(fb_tbl("spawning"),  
-#                    fb_tbl("spawnagg"), 
-#                    relationship = "many-to-many")
-spawn <- fb_tbl("spawning")
-eco <- fb_tbl("ecosystem")
+# fb_tables()
+# 
+# 
+# # ## Get the whole spawning and spawn agg table, joined together:
+# # spawn <- left_join(fb_tbl("spawning"),  
+# #                    fb_tbl("spawnagg"), 
+# #                    relationship = "many-to-many")
+# spawn <- fb_tbl("spawning")
+# eco <- fb_tbl("ecosystem")
 
 # Filter taxa down to the desired species
 suckers <- load_taxa() %>%  filter(Family == "Catostomidae")
 
 
 ## A "filtering join" (inner join) 
-spawn <- spawn %>% inner_join(suckers)
-eco <- eco %>% rename(SpecCode = Speccode) %>% inner_join(suckers)
+# spawn <- spawn %>% inner_join(suckers)
+# eco <- eco %>% rename(SpecCode = Speccode) %>% inner_join(suckers)
+# 
+# 
+# combined <- merge(spawn, suckers)
+# combined2 <- merge(eco, suckers)
 
-
-combined <- merge(spawn, suckers)
-combined2 <- merge(eco, suckers)
 
 
 
@@ -77,5 +80,30 @@ reference_table_subset <- reference_table %>%
 
 
 
+####Step 4: Trait Data
+trait_dat <- read.csv("FishTraits_14.3.csv")
+scinamestrait <- common_to_sci(c(trait_dat$COMMONNAME, trait_dat$OTHERNAMES))
+
+
+catscinamestrait <- scinamestrait %>%
+  filter(Species %in% suckers$Species)
+
+
+# lowercase the names in trait_dat for species and common name in catscinamestraits to match
+trait_dat$COMMONNAME <- str_to_lower(trait_dat$COMMONNAME)
+trait_dat$OTHERNAMES <- str_to_lower(trait_dat$OTHERNAMES)
+catscinamestrait$ComName <- str_to_lower(catscinamestrait$ComName)
+
+
+
+# pick traits of interest (length, temperature preference, substrate preference, current)
+trait_dat_cat <- trait_dat %>% select(COMMONNAME, OTHERNAMES, MAXTL, MINTEMP, MAXTEMP, MUCK:LWD, SLOWCURR:FASTCURR)
+
+trait_dat_cat <- trait_dat_cat %>%
+  filter(COMMONNAME %in% catscinamestrait$ComName | OTHERNAMES %in% catscinamestrait$ComName)
+
+
+
+# write.csv(trait_dat_cat, file = "catostomidae_traits.csv")
 
 
