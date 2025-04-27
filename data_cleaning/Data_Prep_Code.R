@@ -35,7 +35,7 @@ environmental_table <- habitat_data %>%
          ws_runoff = RUNOFFWS, bfi_ws = BFIWS, perm_ws = PERMWS, erod_ws = KFFACTWS) 
 
 #Notes: lat & long in decimal degrees, ecoregion = Omernik Level III ecoregion 
-# Elevation in m; Watershed Area in km2; Slope in % at site
+# Elevation in cm; Watershed Area in km2; Slope in % at site
 # Precipitation in mm (30 year watershed average);Temperature in deg C (30 year watershed average); 
 # Runoff in ??? (watershed average); Base Flow Index in % (watershed average); 
 # Permeability in in/h (watershed average); Erodibility in unitless K factors (watershed average)

@@ -7,9 +7,14 @@
 library(Hmsc)
 library(mapview)
 library(abind)
+library(tidyverse)
+library(glmmTMB)
+
 env_dat <- read.csv("environmental_table_subset.csv")
 fish_dat <- read.csv("fish_count_subset.csv")
 reference_dat <- read.csv("reference_table_subset.csv")
+trait_dat <- read.csv("catostomidae_traits.csv")
+
 
 data <- env_dat %>%
   left_join(reference_dat %>% select(SITE_ID, AG_ECO9, ref_cond, val_cond), by = "SITE_ID") %>% 
@@ -26,13 +31,13 @@ data$elevation <- data$elevation/100
 #   filter(AG_ECO9 == "NAP")
 
 
-# separate reference sites and model construction
+# separate reference sites, model construction and white suckers
 data_ref <- data %>% 
   filter(ref_cond == "REF") %>% 
-  filter(val_cond == "C")
+  filter(val_cond == "C") 
 
-data_ref_whitesuckers <- data_ref %>% 
-  filter(WHITE.SUCKER != 0)
+# %>% 
+#   filter(WHITE.SUCKER != 0)
 
 
 # data_nonref <- data %>% 
@@ -44,12 +49,10 @@ data_ref_whitesuckers <- data_ref %>%
 # mapview(data_SAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 # mapview(data_NAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 mapview(data_ref, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-mapview(data_ref_whitesuckers, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 
 
 
-
-# create occurrence dataframe
+# create occurance and abundance columns
 data_ref_occurance <- data_ref %>% mutate(across(GOLDEN.REDHORSE:TORRENT.SUCKER, ~ ifelse(. > 0, 1, 0)))
 data_ref <- data_ref %>%
   mutate(totabundance = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
@@ -62,37 +65,95 @@ data_ref_occurance <- data_ref_occurance %>%
 
 
 # preliminary relationships between abundance, occurance and covariates
-ggplot(data_ref, aes(x = elevation, y = totabundance)) +
+# elevation
+ggplot(data_ref, aes(x = elevation, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-# elevationlm <- lm(totabundance ~ elevation, data  = data_ref)
-# summary(elevationlm)
-ggplot(data_ref_occurance, aes(x = elevation, y = totspecies)) +
+elevationlm <- lm(WHITE.SUCKER ~ elevation, data  = data_ref)
+summary(elevationlm)
+
+ggplot(data_ref_occurance, aes(x = elevation, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
+elevationoccurance <- glm(WHITE.SUCKER ~ elevation, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(elevationoccurance)
 
 
-ggplot(data_ref, aes(x = ws_precip, y = totabundance)) +
+# precipitation
+ggplot(data_ref, aes(x = ws_precip, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
+preciplm <- lm(WHITE.SUCKER ~ ws_precip, data  = data_ref)
+summary(preciplm)
 
-
-
-ggplot(data_ref, aes(x = ws_temp, y = totabundance)) +
+ggplot(data_ref_occurance, aes(x = ws_precip, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-templm <- lm(totabundance ~ ws_temp, data  = data_ref)
+precipoccurance <- glm(WHITE.SUCKER ~ ws_precip, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(precipoccurance)
+
+
+
+# temperature
+ggplot(data_ref, aes(x = ws_temp, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+templm <- lm(WHITE.SUCKER ~ ws_temp, data  = data_ref)
 summary(templm)
 
-
-ggplot(data_ref, aes(x = slope, y = totabundance)) +
+ggplot(data_ref_occurance, aes(x = ws_temp, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
+tempoccurance <- glm(WHITE.SUCKER ~ ws_temp, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(tempoccurance)
 
 
-ggplot(data_ref, aes(x = erod_ws, y = totabundance)) +
+# runoff
+ggplot(data_ref, aes(x = ws_runoff, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
+runofflm <- lm(WHITE.SUCKER ~ ws_runoff, data  = data_ref)
+summary(runofflm)
+
+ggplot(data_ref_occurance, aes(x = ws_runoff, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+runoffoccurance <- glm(WHITE.SUCKER ~ ws_runoff, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(runoffoccurance)
+
+
+# slope
+ggplot(data_ref, aes(x = slope, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+slopelm <- lm(WHITE.SUCKER ~ slope, data  = data_ref)
+summary(slopelm)
+
+ggplot(data_ref_occurance, aes(x = slope, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+slopeoccurance <- glm(WHITE.SUCKER ~ slope, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(slopeoccurance)
+
+
+
+
+# erosion
+ggplot(data_ref, aes(x = erod_ws, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+erodlm <- lm(WHITE.SUCKER ~ erod_ws, data  = data_ref)
+summary(erodlm)
+
+
+ggplot(data_ref_occurance, aes(x = erod_ws, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+erodoccurance <- glm(WHITE.SUCKER ~ erod_ws, data = data_ref_occurance, family = binomial(link = 'logit'))
+summary(erodoccurance)
+
+
+
 
 
 
@@ -100,9 +161,14 @@ ggplot(data_ref, aes(x = erod_ws, y = totabundance)) +
 
 ####Step 2: Subset Data for Modeling
 # select elevation and precipitation as environmental covariates
+
+
 XData <- data.frame(elevation = data_ref$elevation, precip = data_ref$ws_precip) 
+XData2 <- data.frame(temp = data_ref$ws_temp, runoff = data_ref$ws_runoff)
+
 # select White Suckers to model (Catostomus commersonii)
 Y <- as.matrix(data_ref$WHITE.SUCKER)
+Y2 <- as.matrix(data_ref_occurance$WHITE.SUCKER)
 colnames(Y) <- "Catostomus commersonii"
 # bind together coordinates
 latlong <- as.matrix(cbind(data_ref$lat, data_ref$long))
@@ -114,11 +180,16 @@ studyDesign <- data.frame(site_id = as.factor(data_ref$SITE_ID))
 rownames(latlong) <- studyDesign[,1]
 rL <- HmscRandomLevel(sData = latlong)
 XFormula <- ~ elevation + precip
+XFormula2 <- ~ temp + runoff
+
+
 
 # lognormal poisson for count data
 model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "lognormal poisson",
               studyDesign = studyDesign, ranLevels = list(site_id = rL))
-
+# probit model for occurrence data
+modelprobit <- Hmsc(Y = Y2, XData = XData2, XFormula = XFormula2, distr = "probit",
+              studyDesign = studyDesign, ranLevels = list(site_id = rL))
 
 
 
@@ -130,6 +201,8 @@ verbose = 1000
 
 model.sample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
                            nChains = nChains, verbose = verbose, initPar = "fixed effects")
+modelprobit.sample <- sampleMcmc(modelprobit, thin = thin, samples = samples, transient = transient,
+                           nChains = nChains, verbose = verbose, initPar = "fixed effects")
 
 
 
@@ -139,6 +212,15 @@ summary(model.post$Beta)
 effectiveSize(model.post$Beta)
 gelman.diag(model.post$Beta, multivariate = FALSE)$psrf
 plot(model.post$Beta)
+
+
+
+modelprobit.post <- convertToCodaObject(modelprobit.sample)
+summary(modelprobit.post$Beta)
+effectiveSize(modelprobit.post$Beta)
+gelman.diag(modelprobit.post$Beta, multivariate = FALSE)$psrf
+plot(modelprobit.post$Beta)
+
 
 
 
