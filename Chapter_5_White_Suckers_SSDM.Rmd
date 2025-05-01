@@ -1,0 +1,33 @@
+---
+title: "Ch. 5: Distribution of White Suckers Across America"
+author: "Kurt Riggin"
+output: html_document
+date: "2025-05-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("White_Suckers_SSDM.R")
+```
+
+## Question: 
+
+
+
+## Methods:
+
+
+
+## Results:
+
+##### Figures
+
+##### Challenges
+
+Initial convergence of MCMC chains using abundance data did not look good
+
+
+
+Elevation was initially represented in centimeters instead of meters
+
+

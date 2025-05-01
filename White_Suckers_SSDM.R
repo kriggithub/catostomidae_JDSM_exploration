@@ -3,279 +3,209 @@
 #### Chosen species: White Sucker (present in 199 sites with max count of 169)
 
 
-####Step 1: Load in packages and datasets from cleaning
+####Step 1: Load in packages, data, and preliminary inspection
 library(Hmsc)
 library(mapview)
 library(abind)
 library(tidyverse)
+library(ggspatial)
 library(glmmTMB)
 
-env_dat <- read.csv("environmental_table_subset.csv")
-fish_dat <- read.csv("fish_count_subset.csv")
-reference_dat <- read.csv("reference_table_subset.csv")
-trait_dat <- read.csv("catostomidae_traits.csv")
-
-
-data <- env_dat %>%
-  left_join(reference_dat %>% select(SITE_ID, AG_ECO9, ref_cond, val_cond), by = "SITE_ID") %>% 
-  left_join(fish_dat, by = "SITE_ID")
-
-# convert elevation from cm to m
+data <- read.csv("suckerspresencedata.csv")
 data$elevation <- data$elevation/100
 
-  
-# seperate SAP and NAP to visualize
-# data_SAP <- data %>%
-#   filter(AG_ECO9 == "SAP")
-# data_NAP <- data %>%
-#   filter(AG_ECO9 == "NAP")
-
-
-# separate reference sites, model construction and white suckers
-data_ref <- data %>% 
-  filter(ref_cond == "REF") %>% 
-  filter(val_cond == "C") 
-
-# %>% 
-#   filter(WHITE.SUCKER != 0)
-
-
-# data_nonref <- data %>% 
-#   filter(ref_cond == "NON-REF")
+# separate model construction and validation sites
+data_C <- data %>% filter(val_cond == "C")
+data_V <- data %>% filter(val_cond == "V")
 
 
 # Look at location of sites
-# mapview(data, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-# mapview(data_SAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-# mapview(data_NAP, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
-mapview(data_ref, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+mapview(data, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+mapview(data_C, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
+mapview(data_V, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 
 
 
-# create occurance and abundance columns
-data_ref_occurance <- data_ref %>% mutate(across(GOLDEN.REDHORSE:TORRENT.SUCKER, ~ ifelse(. > 0, 1, 0)))
-data_ref <- data_ref %>%
-  mutate(totabundance = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
-data_ref_occurance <- data_ref_occurance %>%
-  mutate(totspecies = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
-
-
-
-
-
-
-# preliminary relationships between abundance, occurance and covariates
-# elevation
-ggplot(data_ref, aes(x = elevation, y = WHITE.SUCKER)) +
+# preliminary relationships between abundance, occurrence and covariates
+  # elevation
+ggplot(data_C, aes(x = elevation, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-elevationlm <- lm(WHITE.SUCKER ~ elevation, data  = data_ref)
-summary(elevationlm)
-
-ggplot(data_ref_occurance, aes(x = elevation, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-elevationoccurance <- glm(WHITE.SUCKER ~ elevation, data = data_ref_occurance, family = binomial(link = 'logit'))
+elevationoccurance <- glm(WHITE.SUCKER ~ elevation, data = data_C, family = binomial(link = 'logit'))
 summary(elevationoccurance)
 
-
-# precipitation
-ggplot(data_ref, aes(x = ws_precip, y = WHITE.SUCKER)) +
+  # precipitation
+ggplot(data_C, aes(x = ws_precip, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-preciplm <- lm(WHITE.SUCKER ~ ws_precip, data  = data_ref)
-summary(preciplm)
-
-ggplot(data_ref_occurance, aes(x = ws_precip, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-precipoccurance <- glm(WHITE.SUCKER ~ ws_precip, data = data_ref_occurance, family = binomial(link = 'logit'))
+precipoccurance <- glm(WHITE.SUCKER ~ ws_precip, data = data_C, family = binomial(link = 'logit'))
 summary(precipoccurance)
 
-
-
-# temperature
-ggplot(data_ref, aes(x = ws_temp, y = WHITE.SUCKER)) +
+  # temperature
+ggplot(data_C, aes(x = ws_temp, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-templm <- lm(WHITE.SUCKER ~ ws_temp, data  = data_ref)
-summary(templm)
-
-ggplot(data_ref_occurance, aes(x = ws_temp, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-tempoccurance <- glm(WHITE.SUCKER ~ ws_temp, data = data_ref_occurance, family = binomial(link = 'logit'))
+tempoccurance <- glm(WHITE.SUCKER ~ ws_temp, data = data_C, family = binomial(link = 'logit'))
 summary(tempoccurance)
 
-
-# runoff
-ggplot(data_ref, aes(x = ws_runoff, y = WHITE.SUCKER)) +
+  # runoff
+ggplot(data_C, aes(x = ws_runoff, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-runofflm <- lm(WHITE.SUCKER ~ ws_runoff, data  = data_ref)
-summary(runofflm)
-
-ggplot(data_ref_occurance, aes(x = ws_runoff, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-runoffoccurance <- glm(WHITE.SUCKER ~ ws_runoff, data = data_ref_occurance, family = binomial(link = 'logit'))
+runoffoccurance <- glm(WHITE.SUCKER ~ ws_runoff, data = data_C, family = binomial(link = 'logit'))
 summary(runoffoccurance)
 
-
-# slope
-ggplot(data_ref, aes(x = slope, y = WHITE.SUCKER)) +
+  # slope
+ggplot(data_C, aes(x = slope, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-slopelm <- lm(WHITE.SUCKER ~ slope, data  = data_ref)
-summary(slopelm)
-
-ggplot(data_ref_occurance, aes(x = slope, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-slopeoccurance <- glm(WHITE.SUCKER ~ slope, data = data_ref_occurance, family = binomial(link = 'logit'))
+slopeoccurance <- glm(WHITE.SUCKER ~ slope, data = data_C, family = binomial(link = 'logit'))
 summary(slopeoccurance)
 
-
-
-
-# erosion
-ggplot(data_ref, aes(x = erod_ws, y = WHITE.SUCKER)) +
+  # erosion
+ggplot(data_C, aes(x = erod_ws, y = WHITE.SUCKER)) +
   geom_point() +
   geom_smooth(method = "lm")
-erodlm <- lm(WHITE.SUCKER ~ erod_ws, data  = data_ref)
-summary(erodlm)
-
-
-ggplot(data_ref_occurance, aes(x = erod_ws, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-erodoccurance <- glm(WHITE.SUCKER ~ erod_ws, data = data_ref_occurance, family = binomial(link = 'logit'))
+erodoccurance <- glm(WHITE.SUCKER ~ erod_ws, data = data_C, family = binomial(link = 'logit'))
 summary(erodoccurance)
 
 
 
 
-
-
-
-
 ####Step 2: Subset Data for Modeling
-# select elevation and precipitation as environmental covariates
+# select temperature and erosion to have relevance to trait data (max temp/substrate preference)
 
-
-XData <- data.frame(elevation = data_ref$elevation, precip = data_ref$ws_precip) 
-XData2 <- data.frame(temp = data_ref$ws_temp, runoff = data_ref$ws_runoff)
+XData <- data.frame(temp = data_C$ws_temp, erosion = data_C$erod_ws)
 
 # select White Suckers to model (Catostomus commersonii)
-Y <- as.matrix(data_ref$WHITE.SUCKER)
-Y2 <- as.matrix(data_ref_occurance$WHITE.SUCKER)
-colnames(Y) <- "Catostomus commersonii"
-# bind together coordinates
-latlong <- as.matrix(cbind(data_ref$lat, data_ref$long))
+Y <- as.matrix(data_C$WHITE.SUCKER)
+colnames(Y) <- "Catostomus_commersonii"
+# bind together coordinates to include spatial random effect
+latlong <- as.matrix(cbind(data_C$lat, data_C$long))
+
+
+# spatial graph for initial inspection
+ggplot(data, aes(x = long, y = lat, fill = ws_temp)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
+
+
+ggplot(data, aes(x = long, y = lat, fill = erod_ws)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
 
 
 
-####Step 3: Setup model
-studyDesign <- data.frame(site_id = as.factor(data_ref$SITE_ID))
+####Step 3: Setup model and run MCMC chain
+studyDesign <- data.frame(site_id = as.factor(data_C$SITE_ID))
 rownames(latlong) <- studyDesign[,1]
 rL <- HmscRandomLevel(sData = latlong)
-XFormula <- ~ elevation + precip
-XFormula2 <- ~ temp + runoff
+XFormula <- ~ temp + erosion
 
-
-
-# lognormal poisson for count data
-model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "lognormal poisson",
-              studyDesign = studyDesign, ranLevels = list(site_id = rL))
-# probit model for occurrence data
-modelprobit <- Hmsc(Y = Y2, XData = XData2, XFormula = XFormula2, distr = "probit",
+# use probit model for occurance data
+model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "probit",
               studyDesign = studyDesign, ranLevels = list(site_id = rL))
 
 
-
+# MCMC parameters
 nChains = 2
 samples = 1000
 thin = 10
 transient = 5000
 verbose = 1000
-
-model.sample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
-                           nChains = nChains, verbose = verbose, initPar = "fixed effects")
-modelprobit.sample <- sampleMcmc(modelprobit, thin = thin, samples = samples, transient = transient,
+# MCMC sampling with first fitting models in maximum-likelihood framework
+modelsample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
                            nChains = nChains, verbose = verbose, initPar = "fixed effects")
 
 
 
-####Step 4: Evaluate MCMC convergence (increased thinning and transient size due to bad initial convergence)
-model.post <- convertToCodaObject(model.sample)
-summary(model.post$Beta)
-effectiveSize(model.post$Beta)
-gelman.diag(model.post$Beta, multivariate = FALSE)$psrf
-plot(model.post$Beta)
+####Step 4: Evaluate MCMC convergence
+modelpost <- convertToCodaObject(modelsample, spNamesNumbers = c(T,F), covNamesNumbers = c(T,F)) # refer to species and covars by names instead of numbers
+  # for beta parameters
+plot(modelpost$Beta) # convergence looks good
+effectiveSize(modelpost$Beta) # ESS relatively high
+gelman.diag(modelpost$Beta, multivariate = FALSE)$psrf # relatively close to 1
+summary(modelpost$Beta)
+  # for spatial scale parameter
+plot(modelpost$Alpha[[1]]) # convergence is very poor
+effectiveSize(modelpost$Alpha[[1]]) 
+gelman.diag(modelpost$Alpha[[1]], multivariate = FALSE)$psrf 
 
 
 
-modelprobit.post <- convertToCodaObject(modelprobit.sample)
-summary(modelprobit.post$Beta)
-effectiveSize(modelprobit.post$Beta)
-gelman.diag(modelprobit.post$Beta, multivariate = FALSE)$psrf
-plot(modelprobit.post$Beta)
 
 
 
 
-####Step 5: evaluate model fit
-preds <- computePredictedValues(model.sample, expected = F)
-evaluateModelFit(hM = model.sample, predY = preds)
+####Step 5: Evaluate explanatory & predictive power of model
+  # Explanatory power
+preds <- computePredictedValues(modelsample, expected = F)
+evaluateModelFit(hM = modelsample, predY = preds)
+# AUC = 0.915
+# TjurR2 = 0.515
+# Indicates relatively high explanatory power for determining presences and absences
 
 
 
-# variance partitioning
-groupnames <- c("elevation", "precipitation")
-group <- c(1,2)
-VP <- list()
-VP <- computeVariancePartitioning(model.sample, group = group, groupnames = groupnames)
-VP
 
-
-
-# see how parameters translate into model predictions
+# Construct gradient plots for Beta Parameters for model predictions
 par(mfrow  = c(1,2))
-Gradient <- constructGradient(model.sample, focalVariable = "precip")
-predY <- predict(model.sample, Gradient = Gradient, expected = T)
-plotGradient(model.sample, Gradient, pred = predY, measure = "Y", index = 1, showData = T)
+tempGradient <- constructGradient(modelsample, focalVariable = "temp")
+temppred <- predict(modelsample, Gradient = tempGradient, expected = T)
+plotGradient(modelsample, tempGradient, pred = temppred, measure = "Y", index = 1, showData = T)
 
-
-Gradient2 <- constructGradient(model.sample, focalVariable = "elevation")
-predY2 <- predict(model.sample, Gradient = Gradient2, expected = T)
-plotGradient(model.sample, Gradient2, pred = predY2, measure = "Y", index = 1, showData = T)
-
-
-
-
-
-
-# cross validation ########## Should have not included validation references? Explanatory measurements went down significantly
-partition <- createPartition(model.sample, nfolds = 2, column = "site_id")
-predscv <- computePredictedValues(model.sample, partition = partition)
-evaluateModelFit(hM = model.sample, predY = predscv)
+eroGradient <- constructGradient(modelsample, focalVariable = "erosion")
+eropred <- predict(modelsample, Gradient = eroGradient, expected = T)
+plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1, showData = T)
 
 
 
 
 
-# predict distribution in non-reference sites
-latlong.grid <- as.matrix(cbind(data_nonref$lat, data_nonref$long))
-XData.grid <- data.frame(elevation = data_nonref$elevation, precip = data_nonref$ws_precip)
-Gradient.grid <- prepareGradient(model.sample, XDataNew = XData.grid,
+
+# # cross validation ########## Should have not included validation references? Explanatory measurements went down significantly
+# partition <- createPartition(model.sample, nfolds = 2, column = "site_id")
+# predscv <- computePredictedValues(model.sample, partition = partition)
+# evaluateModelFit(hM = model.sample, predY = predscv)
+
+
+
+
+
+# Predict distribution in validation sites
+latlong.grid <- as.matrix(cbind(data_V$lat, data_V$long))
+XData.grid <- data.frame(temp = data_V$ws_temp, erosion = data_V$erod_ws)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
                                  sDataNew = list(site_id = latlong.grid))
-predYnr <- predict(model.sample, Gradient = Gradient.grid)
-# predictive mean value over posterior
-EpredY <- apply(abind(predYnr, along = 3), c(1,2), mean)
-# posterior probability that the count is non-zero
-EpredO <- apply(abind(predYnr, along = 3), c(1,2), 
-                FUN = function(a) {mean(a > 0)})
-plotGradient(model.sample, Gradient.grid, predY = predYnr, measure = "Y", index = 1, showData = T)
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, lat, long, ws_temp, erod_ws, WHITE.SUCKER) %>% left_join(EpredY, by = "SITE_ID")
+
+
+# summary(posteriordata$long)
+# summary(posteriordata$lat)
+ggplot(posteriordata, aes(x = long, y = lat, fill = `Catostomus commersonii`)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+
+
+
+
+
+
+
+
+
 
 
 

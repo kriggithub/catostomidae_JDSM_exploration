@@ -107,3 +107,21 @@ trait_dat_cat <- trait_dat_cat %>%
 # write.csv(trait_dat_cat, file = "catostomidae_traits.csv")
 
 
+
+env_dat <- read.csv("environmental_table_subset.csv")
+fish_dat <- read.csv("fish_count_subset.csv")
+reference_dat <- read.csv("reference_table_subset.csv")
+
+data <- env_dat %>%
+  left_join(reference_dat %>% select(SITE_ID, AG_ECO9, ref_cond, val_cond), by = "SITE_ID") %>% 
+  left_join(fish_dat, by = "SITE_ID") %>% filter(ref_cond = non_ref)
+
+
+
+data_ref_occurance <- data_ref %>% mutate(across(GOLDEN.REDHORSE:TORRENT.SUCKER, ~ ifelse(. > 0, 1, 0)))
+data_ref <- data_ref %>%
+  mutate(totabundance = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
+data_ref_occurance <- data_ref_occurance %>%
+  mutate(totspecies = rowSums(select(., GOLDEN.REDHORSE:TORRENT.SUCKER)))
+
+
