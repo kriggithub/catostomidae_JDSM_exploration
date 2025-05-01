@@ -1,5 +1,5 @@
 ---
-title: "Ch. 5: Distribution of White Suckers Across America"
+title: "Ch. 5: Distribution of White Suckers"
 author: "Kurt Riggin"
 output: html_document
 date: "2025-05-01"
@@ -7,27 +7,104 @@ date: "2025-05-01"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("White_Suckers_SSDM.R")
+library(Hmsc)
+library(mapview)
+library(abind)
+library(tidyverse)
+library(ggspatial)
+library(glmmTMB)
+load("~/R/catostomidae_JDSM_exploration/Chapter_5_Workspace.RData")
 ```
 
-## Question: 
+## Question: How does temperature and erosion impact the distribution of White Suckers across Northeastern United States?
 
 
-
-## Methods:
+## Methods: 
+data cleaning and curation for environmental, site, abundance, filtering from NRSA 2018-2019 data sets to include family "catostomidae"
+preliminary inspection of relationships between abundance, occurrence and covariates
+subset data to model using temperature and erosion as covariates, both of which influence the trait data used in subsequent chapters
+select white suckers to model and binding together longitude and latitude as spatial random effect
+setup probit model for occurrence data due to abundance lognormal poisson model convergence being unsatisfactory
+compute MCMC using the following parameters
+evaluate MCMC convergence for both beta and alpha parameters, and evaluate parameter values
+compute explanatory power of the model and construct gradient plots for model predictions
+predict distribution across validation sites and compare results
 
 
 
 ## Results:
+erosion and temperature showed significance in the glm with negative associations in both temperature and erosion on species presence (list values)
+consistent with MCMC posterior estimates of beta parameters, over 95% of posterior distribution was negative for both covariates (list values)
+explanatory power of the model was strong (list values) and gradient plots showed negative association once again
+across validation sites, relatively predicted density (need help with finding actual numerical value)
+
 
 ##### Figures
 
+```{r, echo = F, message=F}
+ggplot(data_C, aes(x = ws_temp, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(data_C, aes(x = erod_ws, y = WHITE.SUCKER)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(data, aes(x = long, y = lat, fill = ws_temp)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
+
+
+ggplot(data, aes(x = long, y = lat, fill = erod_ws)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
+
+
+
+plot(modelpost$Beta)
+
+
+par(mfrow  = c(1,2))
+tempGradient <- constructGradient(modelsample, focalVariable = "temp")
+temppred <- predict(modelsample, Gradient = tempGradient, expected = T)
+plotGradient(modelsample, tempGradient, pred = temppred, measure = "Y", index = 1, showData = T)
+
+eroGradient <- constructGradient(modelsample, focalVariable = "erosion")
+eropred <- predict(modelsample, Gradient = eroGradient, expected = T)
+plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1, showData = T)
+
+
+
+
+
+ggplot(posteriordata, aes(x = long, y = lat, fill = Catostomus_commersonii)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+
+
+ggplot(posteriordata, aes(x = long, y = lat, fill = WHITE.SUCKER)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+
+```
+
+
 ##### Challenges
 
-Initial convergence of MCMC chains using abundance data did not look good
+Initial convergence of MCMC chains using abundance data was not satisfactory
 
 
 
 Elevation was initially represented in centimeters instead of meters
 
 
+The posterior distribution somewhat matched the distribution of the validation set
+
+MCMC covergence of alpha parameter spatial effect was not satisfactory

@@ -193,7 +193,7 @@ posteriordata$WHITE.SUCKER <- ifelse(posteriordata$WHITE.SUCKER == 1, "present",
 
 # summary(posteriordata$long)
 # summary(posteriordata$lat)
-ggplot(posteriordata, aes(x = long, y = lat, fill = Catostomus_commersonii)) +
+ggplot(posteriordata, aes(x = long, y = lat, fill = `Catostomus commersonii`)) +
   borders("state", colour = "gray80", fill = "gray90") +
   geom_point(shape = 21, color = "black", size = 2) +
   scale_fill_gradient(low = "blue", high = "red") +
@@ -207,7 +207,13 @@ ggplot(posteriordata, aes(x = long, y = lat, fill = WHITE.SUCKER)) +
 
 
 
-save.image(file = "Chapter_5_Workspace.RData")
+
+
+
+
+
+
+
 
 
 
