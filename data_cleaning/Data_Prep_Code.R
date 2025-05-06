@@ -149,6 +149,7 @@ cat_scicomnames <- cat_scicomnames %>%
 cat_scicomnames <- cat_scicomnames[cat_scicomnames$ComName %in% data_cat_comnames, ]
 cat_scicomnames <- cat_scicomnames %>% select(Species, ComName)
 names(cat_scicomnames)[names(cat_scicomnames) == 'ComName'] <- 'COMMONNAME'
+cat_scicomnames <- as.data.frame(cat_scicomnames)
 
 
 data_cat_scinames <- as.character(cat_scicomnames$Species)
@@ -158,7 +159,8 @@ data_cat_scinames <- as.character(cat_scicomnames$Species)
 # write.csv(data, file = "suckersabundancedata.csv")
 # write.csv(data_pres, file = "suckerspresencedata.csv")
 
-
+# Export dataframe for common name to scientific name as reference
+# write.csv(cat_scicomnames, file = "com_&_sci_names.csv")
 
 
 

@@ -12,7 +12,6 @@ library(ggspatial)
 library(glmmTMB)
 
 data <- read.csv("suckerspresencedata.csv")
-data$elevation <- data$elevation/100
 
 # separate model construction and validation sites
 data_C <- data %>% filter(val_cond == "C")
@@ -28,45 +27,45 @@ mapview(data_V, xcol = "long", ycol = "lat", crs = 4269, grid = FALSE)
 
 # preliminary relationships between abundance, occurrence and covariates
   # elevation
-ggplot(data_C, aes(x = elevation, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = elevation, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-elevationoccurance <- glm(WHITE.SUCKER ~ elevation, data = data_C, family = binomial(link = 'logit'))
+elevationoccurance <- glm(white.sucker ~ elevation, data = data_C, family = binomial(link = 'logit'))
 summary(elevationoccurance)
 
   # precipitation
-ggplot(data_C, aes(x = ws_precip, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = ws_precip, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-precipoccurance <- glm(WHITE.SUCKER ~ ws_precip, data = data_C, family = binomial(link = 'logit'))
+precipoccurance <- glm(white.sucker ~ ws_precip, data = data_C, family = binomial(link = 'logit'))
 summary(precipoccurance)
 
   # temperature
-ggplot(data_C, aes(x = ws_temp, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = ws_temp, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-tempoccurance <- glm(WHITE.SUCKER ~ ws_temp, data = data_C, family = binomial(link = 'logit'))
+tempoccurance <- glm(white.sucker ~ ws_temp, data = data_C, family = binomial(link = 'logit'))
 summary(tempoccurance)
 
   # runoff
-ggplot(data_C, aes(x = ws_runoff, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = ws_runoff, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-runoffoccurance <- glm(WHITE.SUCKER ~ ws_runoff, data = data_C, family = binomial(link = 'logit'))
+runoffoccurance <- glm(white.sucker ~ ws_runoff, data = data_C, family = binomial(link = 'logit'))
 summary(runoffoccurance)
 
   # slope
-ggplot(data_C, aes(x = slope, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = slope, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-slopeoccurance <- glm(WHITE.SUCKER ~ slope, data = data_C, family = binomial(link = 'logit'))
+slopeoccurance <- glm(white.sucker ~ slope, data = data_C, family = binomial(link = 'logit'))
 summary(slopeoccurance)
 
   # erosion
-ggplot(data_C, aes(x = erod_ws, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = erod_ws, y = white.sucker)) +
   geom_point() +
   geom_smooth(method = "lm")
-erodoccurance <- glm(WHITE.SUCKER ~ erod_ws, data = data_C, family = binomial(link = 'logit'))
+erodoccurance <- glm(white.sucker ~ erod_ws, data = data_C, family = binomial(link = 'logit'))
 summary(erodoccurance)
 
 
@@ -78,7 +77,7 @@ summary(erodoccurance)
 XData <- data.frame(temp = data_C$ws_temp, erosion = data_C$erod_ws)
 
 # select White Suckers to model (Catostomus commersonii)
-Y <- as.matrix(data_C$WHITE.SUCKER)
+Y <- as.matrix(data_C$white.sucker)
 colnames(Y) <- "Catostomus_commersonii"
 # bind together coordinates to include spatial random effect
 latlong <- as.matrix(cbind(data_C$lat, data_C$long))
@@ -117,9 +116,11 @@ samples = 1000
 thin = 10
 transient = 5000
 verbose = 1000
+nParallel = 2
 # MCMC sampling with first fitting models in maximum-likelihood framework
 modelsample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
-                           nChains = nChains, verbose = verbose, initPar = "fixed effects")
+                           nChains = nChains, verbose = verbose, nParallel = nParallel,
+                          initPar = "fixed effects")
 
 
 
@@ -166,17 +167,7 @@ plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1,
 
 
 
-
-# # cross validation ########## Should have not included validation references? Explanatory measurements went down significantly
-# partition <- createPartition(model.sample, nfolds = 2, column = "site_id")
-# predscv <- computePredictedValues(model.sample, partition = partition)
-# evaluateModelFit(hM = model.sample, predY = predscv)
-
-
-
-
-
-# Predict distribution in validation sites
+# Predict distribution in validation sites                      need numerical value for predictive score
 latlong.grid <- as.matrix(cbind(data_V$lat, data_V$long))
 XData.grid <- data.frame(temp = data_V$ws_temp, erosion = data_V$erod_ws)
 Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
@@ -187,19 +178,33 @@ predYnr <- predict(modelsample, Gradient = Gradient.grid)
 # posterior occurrence probability for each site
 EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
 EpredY$SITE_ID <- data_V$SITE_ID
-posteriordata <- data_V %>% select(SITE_ID, lat, long, ws_temp, erod_ws, WHITE.SUCKER) %>% left_join(EpredY, by = "SITE_ID")
-posteriordata$WHITE.SUCKER <- ifelse(posteriordata$WHITE.SUCKER == 1, "present", "absent")
+posteriordata <- data_V %>% select(SITE_ID, lat, long, ws_temp, erod_ws, white.sucker) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$white.sucker <- ifelse(posteriordata$white.sucker == 1, "present", "absent")
+names(posteriordata)[names(posteriordata) == 'white.sucker'] <- 'observed'
+names(posteriordata)[names(posteriordata) == 'Catostomus_commersonii'] <- 'post.prob'
+
+
+# accuracy of model predictions
+posteriordata$predicted <- ifelse(posteriordata$post.prob >= 0.5, "present", "absent")
+posteriordata$correct <- posteriordata$predicted == posteriordata$observed
+mean(posteriordata$correct) # 65% accuracy
+
 
 
 # summary(posteriordata$long)
 # summary(posteriordata$lat)
-ggplot(posteriordata, aes(x = long, y = lat, fill = `Catostomus commersonii`)) +
+ggplot(posteriordata, aes(x = long, y = lat, fill = post.prob)) +
   borders("state", colour = "gray80", fill = "gray90") +
   geom_point(shape = 21, color = "black", size = 2) +
   scale_fill_gradient(low = "blue", high = "red") +
   coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
 
-ggplot(posteriordata, aes(x = long, y = lat, fill = WHITE.SUCKER)) +
+ggplot(posteriordata, aes(x = long, y = lat, fill = observed)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+
+ggplot(posteriordata, aes(x = long, y = lat, fill = correct)) +
   borders("state", colour = "gray80", fill = "gray90") +
   geom_point(shape = 21, color = "black", size = 2) +
   coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
