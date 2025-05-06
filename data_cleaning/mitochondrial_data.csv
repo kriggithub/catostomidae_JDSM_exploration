@@ -1,0 +1,100 @@
+﻿Table S1. Mitochondrial dataset sample information and GenBank accession numbers. Sequences newly obtained in this study are highlighted in green. ,,,,,,,,,,,,,,,,,,,,
+Taxon,Subfamily,Tribe,,Species,Lab ID #,Full mitogenome,ND1,ND2,"ATPase 8&6, COIII",ND4L,ND4,ND5,ND6,Cytb,Lab ID #,Source,Location State,Location Locality,Drainage,Notes
+Catostomidae,Myxocyprininae,,,Myxocyprinus asiaticus,,AB223007,,,,,,,,,,GenBank,,,,
+,Cycleptinae,,,Cycleptus elongatus,,AB126082,,,,,,,,,,GenBank,,,,
+,Ictiobinae,,,Ictiobus bubalus,,AP009316,,,,,,,,,,GenBank,,,,
+,,,,Ictiobus cyprinellus,,KP306894,,,,,,,,,,GenBank,,,,
+,,,,Ictiobus niger,GN21747,OL878389,,,,,,,,,GN21747,KU,Kansas,"Douglas, Deer Creek arm of Clinton Lake, NW corner; 38.9534760000°, -95.4311480000°",,Field #: GL 06-01; Voucher Specimen: KUI 39513; Tissue # 7859
+,,,,Carpiodes carpio,,AB126083,,,,,,,,,,GenBank,,,,
+,,,,Carpiodes cyprinus,GN21302,OL878366,,,,,,,,,GN21302,FLMNH,Florida,Apalachicola River on right descending bank about 8.2 km NE of Wewahitchka,Apalachicola River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2015-0850; Current:true; Start date:06/11/2015
+,,,,Carpiodes velifer,GN21303,OL878367,,,,,,,,,GN21303,FLMNH,Florida,Escambia River from FL Hwy 184 downsrteam for about 1 mile,Escambia River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2015-0824; Current:true; Start date:06/09/2015
+,Catostominae,Catostomini,,Catostomus ardens,GN21778,OL878382,,,,,,,,,GN21778,SLU,Idaho,"Raft River at Idaohme Lane, 2.5 mi E Idahome, Cassia County; Drainage: Snake River",,"Tube number: AFT-0207; Field number: BRK97-50; Alt Field Number: DAN97-34; Collector: D.A.Neely, B.R.Kuhajda; Date: Year 1997; Medium type: frozen"
+,,,,Catostomus bernardini,GN21779,OL878383,,,,,,,,,GN21779,SLU,Chihuahua,Rio Verde and west tributary pstream of Mx Hwy 24; Drainage: Rio Fuerte,,"Tube number: CAT-077; Field number: RLM07-07; Alt Field Number: BRK07-31; Collector: R.L.Mayden, K.Anderson, B.R.Kuhajda, J.R.Tomelleri,etc; Date: 15-Apr-11; Medium type: EtOH"
+,,,,Catostomus cahita,GN21781,OL878397,,,,,,,,,GN21781,SLU,Chihuahua,Arroyo below Huevachic; Drainage: Rio Mayo,,Tube number: T-3526; Field number: RLM06-61; Alt Field Number: DAH2000-11-03-3; Collector: Richard L. Mayden and D.A. Hendrickson; Date: 4-Nov-04; Medium type: EtOH
+,,,,Catostomus catostomus,,,KJ441386,KJ441335,KJ441233,KJ441182,KJ441182,KJ441131,KJ441131,KJ441284,,GenBank,,,,
+,,,,Catostomus columbianus,GN21782,OL878384,,,,,,,,,GN21782,SLU,Oregon,"Silvies River downstream of dam, 4.7 mi N Burns, Harney County; Drainage: Malheur Lake",,"Tube number: AFT-0194; Field number: BRK97-61; Alt Field Number: DAN97-43; Collector: D.A.Neely, B.R.Kuhajda; Date: year 1997; Medium type: frozen"
+,,,,Catostomus commersoni,GN21304,OL878368,,,,,,,,,GN21304,FLMNH,North Carolina,Crab Creek at Rt. 18 near Ennice,Ohio R-Kanawha R-New River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2010-0439; Current:true; Start date:11/26/2010
+,,,,Catostomus fumeiventris,GN21788,OL878396,,,,,,,,,GN21788,SLU,California,"Sespe River, Ventura County",,Tube number: AFT-0208; Field number: BRK94-102; Collector: B.R.Kuhajda; Date: Year 1992; Medium type: frozen
+,,,,Catostomus insignis,,,KJ441385,KJ441334,KJ441232,KJ441181,KJ441181,KJ441130,KJ441130,KJ441283,,GenBank,,,,
+,,,,Catostomus leopoldi,GN21783,OL878385,,,,,,,,,GN21783,SLU,Chihuahua,Rio Gavilan at Las amarillas; Drainage: Yaqui,,"Tube number: RLM-18961; Field number: RLM15-33; Alt Field Number: RLM, RJT; Collector: R.L. Mayden, R.J. Thoni; Date: 30-Apr-19; Medium type: EtOH"
+,,,,Catostomus macrocheilus,GN21817,OL878398,,,,,,,,,GN21817,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,,,Catostomus occidentalis,GN21785,OL878386,,,,,,,,,GN21785,SLU,Oregon,"Cottonwood Creek at Co. Rd. 220, 6.3 mi WNW Lakeview, Lake County",,"Tube number: AFT-0205; Field number: BRK97-63; Alt Field Number: DAN97-45; Collector: D.A.Neely, B.R.Kuhajda; Date: Year 1997; Medium type: frozen"
+,,,,Catostomus tahoensis,GN21815,OL878405,,,,,,,,,GN21815,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,,,Catostomus tsiltcoosensis,GN21813,OL878403,,,,,,,,,GN21813,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,,,Catostomus warnerensis,GN21811,OL878399,,,,,,,,,GN21811,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,,,Catostomus wigginsi,GN21789,OL878387,,,,,,,,,GN21789,SLU,Sonora,"Arroyo San Miguel, 2 km upstream along gravel road; Drainage: Sonora",,"Tube number: MXSp09-574; Field number: CBD09-14; Collector: C.B.Dillman, R.L.Mayden; Date: 20-Apr-13; Medium type: EtOH"
+,,,,Chasmistes brevirostris,GN21792,OL878388,,,,,,,,,GN21792,OSU,Oregon,"Lost River, 3 miles above Bonanza; 1280 meters, Klamath County",,Tube number: AFT-225; Collector: Mark Beuttner; Date: 16-Apr-96; Medium type: Frozen; OSX 8
+,,,,Deltistes luxatus,GN21816,OL878402,,,,,,,,,GN21816,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,,,Pantosteus bondi,GN21786,OL878390,,,,,,,,,GN21786,SLU,Oregon,"Willamette River at river mile 69; 1.8 meters, Marion County",,Tube number: AFT-224; Collector: Randy Wildman; Date: 23-Jul-03; Medium type: Frozen; OSX 236
+,,,,Pantosteus clarkii,,,KJ441363,KJ441312,KJ441210,KJ441159,KJ441159,KJ441108,KJ441108,KJ441261,,GenBank,,,,
+,,,,Pantosteus discobolis,,,KJ441358,KJ441307,KJ441205,KJ441154,KJ441154,KJ441103,KJ441103,KJ441256,,GenBank,,,,
+,,,,Pantosteus jordani,,,KJ441379,KJ441328,KJ441226,KJ441175,KJ441175,KJ441124,KJ441124,KJ441277,,GenBank,,,,
+,,,,Pantosteus lahontan,,,KJ441372,KJ441321,KJ441219,KJ441168,KJ441168,KJ441117,KJ441117,KJ441270,,GenBank,,,,
+,,,,Pantosteus nebuliferus,GN21784,OL878392,,,,,,,,,GN21784,SLU,Durango,Penon Blanco near Penon Blanco; isolated pools; Drainage: Nazas,,"Tube number: T-2554; Field number: RLM15-14; Alt Field Number: RJT, RLM, CLM; Collector: R.L. Mayden, R.J. Thoni, C.L. Martinez; Date: 19-Apr-19; Medium type: EtOH"
+,,,,Pantosteus plebeius,GN21787,OL878391,,,,,,,,,GN21787,SLU,Chihuahua,Rio Gavilan at Las amarillas; Drainage: Yaqui,,"Tube number: RLM-18968; Field number: RLM15-33; Alt Field Number: RLM, RJT; Collector: R.L. Mayden, R.J. Thoni; Date: 30-Apr-19; Medium type: EtOH"
+,,,,Pantosteus platyrhynchus,,,KJ441351,KJ441300,KJ441198,KJ441147,KJ441147,KJ441096,KJ441096,KJ441249,,GenBank,,,,
+,,,,Pantosteus santaanae,,,KJ441366,KJ441315,KJ441213,KJ441162,KJ441162,KJ441111,KJ441111,KJ441264,,GenBank,,,,
+,,,,Pantosteus virescens,,,KJ441371,KJ441320,KJ441218,KJ441167,KJ441167,KJ441116,KJ441116,KJ441269,,GenBank,,,,
+,,,,Xyrauchen texanus,GN21812,OL878401,,,,,,,,,GN21812,OSU,,,,Loan from Oregon State University requested by Lei Yang
+,,Thoburniini,,Hypentelium etowanum,GN21309,OL878373,,,,,,,,,GN21309,FLMNH,Alabama,"Hillabee Creek, 6 miles northeast of Alexander City. Station 22",Tallapoosa River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2006-0395; Current:true; Start date:06/24/2006
+,,,,Hypentelium nigricans,GN21310,OL878374,,,,,,,,,GN21310,FLMNH,North Carolina,"Peters Creek at Hart Road cossing, ca. 2 mi W of Lawsonville",Roanoke R-Dan River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2010-0417; Current:true; Start date:11/26/2010
+,,,,Hypentelium roanokense,GN21311,OL878375,,,,,,,,,GN21311,FLMNH,North Carolina,"Little Creek at Hart Road cossing, ca. 2 mi W of Lawsonville",Roanoke R-Dan River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2010-0403; Current:true; Start date:11/26/2010
+,,,,Vexillichthys atripinnis,GN21317,OL878381,,,,,,,,,GN21317,FLMNH,Kentucky,East Fork Barren River at Kentucky Route 100,Ohio R-Green River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2006-0027; Current:true; Start date:04/19/2006
+,,Moxostomatini,,Moxostoma congestum,,AP009317,,,,,,,,,,GenBank,,,,
+,,,,Moxostoma duquesnii,GN21313,OL878377,,,,,,,,,GN21313,FLMNH,Alabama,"Hillabee Creek, 6 miles northeast of Alexander City. Station 22",Tallapoosa River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2006-0390; Current:true; Start date:06/24/2006
+,,,,Moxostoma erythrurum,GN21314,OL878378,,,,,,,,,GN21314,FLMNH,North Carolina,"Peters Creek at Hart Road cossing, ca. 2 mi W of Lawsonville",Roanoke R-Dan River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2010-0418; Current:true; Start date:11/26/2010
+,,,,Moxostoma pisolabrum,GN21746,OL878395,,,,,,,,,GN21746,KU,Kansas,"Franklin, Marais des Cygnes River at Ottawa; 38.6196950000°, -95.2765200000°",,Field #: GL 06-03; Voucher Specimen: KUI 39512; Tissue # 7858
+,,,,Moxostoma poecilurum,GN21315,OL878379,,,,,,,,,GN21315,FLMNH,Florida,"Canoe Creek on Bratt Rd. about 8km WSW of Century, FL",Escambia,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2015-0629; Current:true; Start date:04/03/2015
+,,,,Moxostoma rupiscartes,GN21316,OL878380,,,,,,,,,GN21316,FLMNH,Georgia,"Candler Creek at Hensley Rd, about 3 miles NW of Gillsville.",Altamaha R-Oconee River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2005-0379; Current:true; Start date:06/11/2005
+,,Erimyzonini,,Erimyzon claviformis,GN21305,OL878369,,,,,,,,,GN21305,FLMNH,Tennessee,Piney Fork at Palmer Road crossing in Fort Cambell Military Reservation,Red River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2007-0429; Current:true; Start date:04/19/2007
+,,,,Erimyzon oblongus,,AP011228,,,,,,,,,,GenBank,,,,
+,,,,Erimyzon sucetta,GN21306,OL878370,,,,,,,,,GN21306,FLMNH,South Carolina,"Spears Creek at Jacobs Mill Rd. crossing, ca. 4 mi E of Pontiac",Santee R-Wateree R,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2010-0350; Current:true; Start date:11/25/2010
+,,,,Erimyzon tenuis,GN21308,OL878372,,,,,,,,,GN21308,FLMNH,Florida,Reedy Creek on CR 168 about 10.5 km W of Century,Escambia,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2015-0630; Current:true; Start date:04/03/2015
+,,,,Minytrema melanops,GN21312,OL878376,,,,,,,,,GN21312,FLMNH,Florida,Escambia River from FL Hwy 184 downsrteam for about 1 mile,Escambia River,UF tissue collection;Family GroupNumber:00287; Tissue Sample #:2015-0826; Current:true; Start date:06/09/2015
+Outgroup,,,,Acantopsis dialuzona,,AB242161,,,,,,,,,,GenBank,,,,
+,,,,Acheilognathus typus,,AB239602,,,,,,,,,,GenBank,,,,
+,,,,Alburnus alburnus,,AB239593,,,,,,,,,,GenBank,,,,
+,,,,Aphyocypris chinensis,,AB218688,,,,,,,,,,GenBank,,,,
+,,,,Barbatula toni,,AB242162,,,,,,,,,,GenBank,,,,
+,,,,Barbonymus gonionotus,,AB238966,,,,,,,,,,GenBank,,,,
+,,,,Barbus barbus,,AB238965,,,,,,,,,,GenBank,,,,
+,,,,Chanos chanos,,AB054133,,,,,,,,,,GenBank,,,,
+,,,,Chromobotia macracanthus,,AB242163,,,,,,,,,,GenBank,,,,
+,,,,Cobitis striata,,AB054125,,,,,,,,,,GenBank,,,,
+,,,,Crossostoma lacustre,,AP010774,,,,,,,,,,GenBank,,,,
+,,,,Cyprinus carpio,,AP009047,,,,,,,,,,GenBank,,,,
+,,,,Danio rerio,,AC024175,,,,,,,,,,GenBank,,,,
+,,,,Enteriomius trimaculatus,,AB239600,,,,,,,,,,GenBank,,,,
+,,,,Esomus metallicus,,AB239594,,,,,,,,,,GenBank,,,,
+,,,,Gila conspersa,,AP009315,,,,,,,,,,GenBank,,,,
+,,,,Gnathopogon elongatus,,AB218687,,,,,,,,,,GenBank,,,,
+,,,,Gobio gobio,,AB239596,,,,,,,,,,GenBank,,,,
+,,,,Gymnocypris przewalskii,,AB239595,,,,,,,,,,GenBank,,,,
+,,,,Gyrinocheilus aymonieri,,AB242164,,,,,,,,,,GenBank,,,,
+,,,,Hemibarbus labeo,,DQ347953,,,,,,,,,,GenBank,,,,
+,,,,Homaloptera leonardi,,AB242165,,,,,,,,,,GenBank,,,,
+,,,,Ischikauia steenackeri,,AB239601,,,,,,,,,,GenBank,,,,
+,,,,Labeo bata,,AP011198,,,,,,,,,,GenBank,,,,
+,,,,Labeo batesii,,AB238967,,,,,,,,,,GenBank,,,,
+,,,,Labeo senegalensis,,AB238968,,,,,,,,,,GenBank,,,,
+,,,,Lefua echigonia,,AB054126,,,,,,,,,,GenBank,,,,
+,,,,Leptobotia mantschurica,,AB242170,,,,,,,,,,GenBank,,,,
+,,,,Misgurnus nikolskyi,,AB242171,,,,,,,,,,GenBank,,,,
+,,,,Mylocheilus caurinus,,AP010779,,,,,,,,,,GenBank,,,,
+,,,,Nipponocypris sieboldii,,AB218898,,,,,,,,,,GenBank,,,,
+,,,,Opsariichthys uncirostris,,AB218897,,,,,,,,,,GenBank,,,,
+,,,,Pangio anguillaris,,AB242168,,,,,,,,,,GenBank,,,,
+,,,,Paralaubuca typus,,AP011211,,,,,,,,,,GenBank,,,,
+,,,,Pelecus cultratus,,AB239597,,,,,,,,,,GenBank,,,,
+,,,,Pethia ticto,,AB238969,,,,,,,,,,GenBank,,,,
+,,,,Phenacogrammus interruptus,,AB054129,,,,,,,,,,GenBank,,,,
+,,,,Pseudaspius nakamurai,,AB218896,,,,,,,,,,GenBank,,,,
+,,,,Pseudogobio esocinus,,AP009310,,,,,,,,,,GenBank,,,,
+,,,,Pseudorasbora pumila,,AB239599,,,,,,,,,,GenBank,,,,
+,,,,Pungtungia herzi,,AB239598,,,,,,,,,,GenBank,,,,
+,,,,Rhodeus ocellatus,,AB070205,,,,,,,,,,GenBank,,,,
+,,,,Schistura balteata,,AB242172,,,,,,,,,,GenBank,,,,
+,,,,Tachysurus tokiensis,,AB054127,,,,,,,,,,GenBank,,,,
+,,,,Tinca tinca,,AB218686,,,,,,,,,,GenBank,,,,
+,,,,Vaillantella maassi,,AB242173,,,,,,,,,,GenBank,,,,
+Note: FLMNH - Florida Museum of Natural History; SLU - Saint Louis University; OSU - Oregon State University; KU - Kansas University.,,,,,,,,,,,,,,,,,,,,
