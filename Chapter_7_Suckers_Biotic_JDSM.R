@@ -68,10 +68,16 @@ summary(modelpost$Beta)
 
 
 
+
 preds <- computePredictedValues(modelsample, expected = F)
 modelfit <- evaluateModelFit(hM = modelsample, predY = preds)
 modelfit
 
+
+
+
+VP <- computeVariancePartitioning(modelsample)
+VP
 
 
 postBeta <- getPostEstimate(modelsample, parName="Beta")
@@ -88,11 +94,8 @@ corrplot(toPlot, method = "color", col = c("grey", "white", "black"))
 
 
 
-
-
-
 OmegaCor2 <- computeAssociations(modelsample2)
-supportLevel2 <- 0.25
+supportLevel2 <- 0.95
 toPlot2 <- ((OmegaCor2[[1]]$support > supportLevel2) +
              (OmegaCor2[[1]]$support < (1-supportLevel2)) > 0) * OmegaCor2[[1]]$mean
 corrplot(toPlot2, method = "color", col = c("grey", "white", "black"))
@@ -105,5 +108,8 @@ biPlot(modelsample, etaPost = getPostEstimate(modelsample, "Eta"),
 
 biPlot(modelsample2, etaPost = getPostEstimate(modelsample2, "Eta"),
        lambdaPost = getPostEstimate(modelsample2, "Lambda"), colVar = 2)
+
+
+
 
 

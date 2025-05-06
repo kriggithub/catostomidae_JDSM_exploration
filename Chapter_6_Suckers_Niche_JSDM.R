@@ -21,8 +21,9 @@ com_to_sci <- read.csv("com_&_sci_names.csv")
 
 
 # select data that includes species from traits and phylogeny
-matchednames <- as.character(traits$SCINAME)
-data <- data %>% select(SITE_ID:val_cond, any_of(matchednames))
+matchedcomnames <- as.character(traits$COMMONNAME)
+matchedscinames <- as.character(traits$SCINAME)
+data <- data %>% select(SITE_ID:val_cond, any_of(matchedcomnames))
 
 
 
@@ -46,16 +47,17 @@ data_V <- data %>% filter(val_cond == "V")
 Y <- as.matrix(data_C %>% select(carpiodes.carpio:moxostoma.rupiscartes))
 XData <- data.frame(temp = data_C$ws_temp)
 TrData <- data.frame(temptol = traits$MAXTEMP)
-rownames(TrData) <- matchednames #rownames of TrData must match species names
+rownames(TrData) <- matchedscinames #rownames of TrData must match species names
 
 studyDesign <- data.frame(site_id = as.factor(data_C$SITE_ID))
+rL <- HmscRandomLevel(units = studyDesign$site_id)
 
 XFormula <- ~ temp
 TrFormula <- ~ temptol
 
 
 model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, TrData = TrData, TrFormula = TrFormula,
-              phyloTree = tree, distr = "probit", studyDesign = studyDesign)
+              phyloTree = tree, distr = "probit", studyDesign = studyDesign, ranLevels = list(site_id = rL))
 
 
 
@@ -78,7 +80,34 @@ gelman.diag(modelpost$Beta, multivariate = FALSE)$psrf # bad values, far from on
 summary(modelpost$Beta)
 
 
-preds <- computePredictedValues(modelsample)
+preds <- computePredictedValues(modelsample, expected = F)
+evaluateModelFit(hM = modelsample, predY = preds)
+
+
+
+Gradient <- constructGradient(modelsample, focalVariable = "temp")
+predY <- predict(modelsample, Gradient = Gradient, expected = T)
+plotGradient(modelsample, Gradient = Gradient, pred = predY, measure = "S",
+             showData = T)
+plotGradient(modelsample, Gradient = Gradient, pred = predY, measure = "T", index = 2, showData = T)
+
+
+
+VP <- computeVariancePartitioning(modelsample, group = c(1,1), groupnames = "temp")
+VP
+
+
+
+# give a sense of what we were missing from each trait from and also phylogeny (what trait and what percent of species were missing)
+# give the taxonomy a try instead of phylogeny
+
+
+
+# given the issue of subsetting everything
+# predict joint probability (probability for each species)
+# sum predicted occurence probabilities across species which will end up being distribution of E at that site
+# could just take the median value of E and then divide it by O
+
 
 
 
