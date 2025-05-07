@@ -85,6 +85,11 @@ evaluateModelFit(hM = modelsample, predY = preds)
 
 
 
+postGamma = getPostEstimate(modelsample, parName="Gamma")
+plotGamma(modelsample, post=postGamma, param="Support", supportLevel = 0.25, covNamesNumbers = c(T,F), trNamesNumbers = c(T,F), colorLevels = 3)
+
+
+
 Gradient <- constructGradient(modelsample, focalVariable = "temp")
 predY <- predict(modelsample, Gradient = Gradient, expected = T)
 plotGradient(modelsample, Gradient = Gradient, pred = predY, measure = "S",

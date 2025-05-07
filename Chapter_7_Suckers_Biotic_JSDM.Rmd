@@ -1,0 +1,175 @@
+---
+title: "Ch. 7: Suckers' Biotic Interactions JDSM"
+author: "Kurt Riggin"
+output: html_document
+date: "2025-05-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(Hmsc)
+library(abind)
+library(corrplot)
+load("~/R/catostomidae_JDSM_exploration/Chapter_7_Workspace.RData")
+```
+
+## Question: How does temperature, erosivity, and the random effect of Aggregated Eco Region affect Sucker's Distribution, and what kind of residual association is there?
+
+
+## Methods: 
+
+The same data set taken from Chapter 5 that includes species presence, fixed environmental variables, and site reference condition was used in this analysis. A joint species distribution model was then built using the Hmsc package following the framework from Chapter 7 of *Joint Species Distribution Modelling with Applications in R* by Ovaskainen and Abrego. Temperature and erosivity were chosen as environmental covariates from Chapter 5's analysis and Aggregated Eco Region was chosen as a random effect to build the model. MCMC was ran using the following parameters in the following code, and convergence was examined for both fixed and random effects using plots, effective sample size, and gelman's diganostic. Additionally, another model was fit using only an intercept, to examine the raw associations between species. 
+
+
+```{r, message = F}
+####Setup model
+Y <- as.matrix(data_C %>% select(golden.redhorse:torrent.sucker))
+
+# selecting aggregated eco region as variable
+XData <- data.frame(aggecoreg = as.factor(data_C$AG_ECO9), temp = data_C$ws_temp, erosion = data_C$erod_ws)
+
+studyDesign <- data.frame(site_id = as.factor(data_C$SITE_ID))
+rL <- HmscRandomLevel(units = studyDesign$site_id)
+
+XFormula <- ~ aggecoreg + temp + erosion
+XFormula2 <- ~ 1
+
+model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "probit", studyDesign = studyDesign, ranLevels = list(site_id = rL), YScale = T)
+model2 <- Hmsc(Y = Y, XData = XData, XFormula = XFormula2, distr = "probit", studyDesign = studyDesign, ranLevels = list(site_id = rL), YScale = T)
+
+nChains = 2
+samples = 2000
+thin = 10
+transient = 5000
+verbose = 1000
+nParallel = 2
+# Full Model
+# modelsample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
+#                           nChains = nChains, verbose = verbose, nParallel = nParallel, 
+#                           initPar = "fixed effects")
+# 
+# 
+# Intercept only Model
+# modelsample2 <- sampleMcmc(model2, thin = thin, samples = samples, transient = transient,
+#                           nChains = nChains, verbose = verbose, nParallel = nParallel, 
+#                           initPar = "fixed effects")
+
+```
+
+
+Variance partitioning for the chosen fixed and random effects of the models was then computed for each species to examine influence of covariates.
+
+```{r, warning = FALSE}
+VP <- computeVariancePartitioning(modelsample)
+```
+
+
+The effect of each parameter on each species probability was then examined to find any possible general trends.
+
+```{r}
+postBeta <- getPostEstimate(modelsample, parName="Beta")
+```
+
+
+
+Raw and residual correlative associations were also examined between pair-wise species to determine any missing biotic influences.
+
+
+```{r}
+
+OmegaCor <- computeAssociations(modelsample)
+supportLevel <- 0.95
+toPlot <- ((OmegaCor[[1]]$support > supportLevel) +
+             (OmegaCor[[1]]$support < (1-supportLevel)) > 0) * OmegaCor[[1]]$mean
+
+
+```
+
+
+Finally the model's predictive power was assessed using the validation set of reference sites by summing the occurrence probabilities across posterior distributions for species and using the mean of the summed distribution as a measure of "expected" values. The expected value was then compared to the observed amount of species by summing probabilities across sites, leading to an observed/expected score for analysis.
+
+
+```{r, message = FALSE, warning = FALSE}
+####Validate model predictions
+# setup predictions for validation dataset
+studyDesign2 <- data.frame(site_id = as.factor(data_V$SITE_ID))
+rL2 <- HmscRandomLevel(units = studyDesign$site_id)
+XData.grid <- data.frame(aggecoreg = as.factor(data_V$AG_ECO9), temp = data_V$ws_temp, erosion = data_V$erod_ws)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
+                                 sDataNew = list(site_id = rL))
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+data_V$observed <- rowSums(data_V[, 18:45])
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, ws_temp, observed) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$expected <- rowSums(posteriordata[, 4:31])
+posteriordata$oe <- posteriordata$observed/posteriordata$expected
+```
+
+
+
+## Results:
+
+
+MCMC convergence diagnostics for the model were not satisfactory, even among changing model parameters to allow for much longer computing time. Some species with more ample data had better diganostic tests but rare species effective sample size and Gelman's diagnostic tests were far from expected.
+
+
+
+Interestingly, when computing variance partitioning, Aggregated Eco Region chosen as a random effect was seen to explain the greatest amount of varianec between species posterior probabilites, however this may or may not be meaningful as model convergence was not the best.
+
+```{r, echo = F}
+plotVariancePartitioning(modelsample, VP)
+```
+
+
+Upon examining the beta parameter effects on each species, we can see that erosivity (misspelled erosion here) had a negative relationship on estimates for a large proportion of species. The resulting table examines relationships above the 95% support level. Temperature on the other hand had a very modest and sparse effect, going either positive or negative on the presence of suckers.
+
+```{r, echo = F}
+plotBeta(modelsample, post=postBeta, param="Support", supportLevel = 0.95, spNamesNumbers = c(T,F), covNamesNumbers = c(T,F))
+```
+
+
+
+
+Species association matrices revealed that there was no remaining residual association, and even among raw association, nothing was there that was supported at the 95% level. This can also be viewed with biplots of site and species scores, however, only the effect of latent variable 1 seemed to have an effect on the ordination space. This may once again be caused due to the scarcity of the dataset used.
+
+
+```{r, echo = FALSE}
+corrplot(toPlot, method = "color", col = c("grey", "white", "black"))
+
+biPlot(modelsample, etaPost = getPostEstimate(modelsample, "Eta"),
+       lambdaPost = getPostEstimate(modelsample, "Lambda"), colVar = 2)
+```
+
+
+
+Finally, although model convergence was not satisfactory, the model gave validation sites a mean observed/expected value of 1.83. A majority of the sites selected did not have any presence of any species used in model building, which caused a skew in the O/E values towards 0.
+
+
+```{r, echo = F, message=F}
+
+ggplot(posteriordata, aes(y = oe)) +
+  geom_boxplot()
+
+hist(posteriordata$oe)
+```
+
+
+
+
+
+
+## Challenges:
+
+The challenge with this chapter was once again using the data in a way that would lead to a successful convergence of MCMCs. The model may have needed to run longer or with different parameters to work successfully, but it's important to note that there were still some interesting results we were able to see with the model that we created. 
+
+
+
+
+
+

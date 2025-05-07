@@ -62,6 +62,13 @@ nParallel = 2
 ```
 
 
+Gamma parameters were then explored, to model the influence of temperature on the temperature tolerance to determine if there was a relationship between environmental conditions and species traits.
+
+```{r}
+postGamma = getPostEstimate(modelsample, parName="Gamma")
+```
+
+
 Finally the model's predictive power was assessed using the validation set of reference sites by summing the occurrence probabilities across posterior distributions for species and using the mean of the summed distribution as a measure of "expected" values. The expected value was then compared to the observed amount of species by summing probabilities across sites, leading to an observed/expected score for analysis.
 
 
@@ -102,6 +109,15 @@ effectiveSize(modelpost$Beta)
 summary(modelpost$Beta)
 
 ```
+
+Gamma parameter analysis demonstrated that there was a positive relationship between temperature of the site and temperature tolerance of species, however only at a low support level of 0.55. This indicates that there could be something suggestive about the relationship between temperature and temperature tolerance as expected, however further convergence of a better fit model would be needed to draw conclusions.
+
+
+```{r, echo = F}
+plotGamma(modelsample, post=postGamma, param="Support", supportLevel = 0.55, covNamesNumbers = c(T,F), trNamesNumbers = c(T,F), colorLevels = 3)
+```
+
+
 
 
 

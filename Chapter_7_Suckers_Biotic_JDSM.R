@@ -41,7 +41,6 @@ model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "probit", study
 model2 <- Hmsc(Y = Y, XData = XData, XFormula = XFormula2, distr = "probit", studyDesign = studyDesign, ranLevels = list(site_id = rL), YScale = T)
 
 
-
 nChains = 2
 samples = 2000
 thin = 10
@@ -80,6 +79,10 @@ VP <- computeVariancePartitioning(modelsample)
 VP
 
 
+plotVariancePartitioning(modelsample, VP)
+
+
+
 postBeta <- getPostEstimate(modelsample, parName="Beta")
 
 plotBeta(modelsample, post=postBeta, param="Support", supportLevel = 0.95, spNamesNumbers = c(T,F), covNamesNumbers = c(T,F))
@@ -109,6 +112,35 @@ biPlot(modelsample, etaPost = getPostEstimate(modelsample, "Eta"),
 biPlot(modelsample2, etaPost = getPostEstimate(modelsample2, "Eta"),
        lambdaPost = getPostEstimate(modelsample2, "Lambda"), colVar = 2)
 
+
+
+
+
+
+studyDesign2 <- data.frame(site_id = as.factor(data_V$SITE_ID))
+rL2 <- HmscRandomLevel(units = studyDesign$site_id)
+XData.grid <- data.frame(aggecoreg = as.factor(data_V$AG_ECO9), temp = data_V$ws_temp, erosion = data_V$erod_ws)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
+                                 sDataNew = list(site_id = rL))
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+data_V$observed <- rowSums(data_V[, 18:45])
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, ws_temp, observed) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$expected <- rowSums(posteriordata[, 4:31])
+posteriordata$oe <- posteriordata$observed/posteriordata$expected
+
+mean(posteriordata$oe)
+
+
+ggplot(posteriordata, aes(y = oe)) +
+  geom_boxplot()
+
+hist(posteriordata$oe)
 
 
 
