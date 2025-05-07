@@ -20,67 +20,113 @@ load("~/R/catostomidae_JDSM_exploration/Chapter_5_Workspace.RData")
 
 
 ## Methods: 
-data cleaning and curation for environmental, site, abundance, filtering from NRSA 2018-2019 data sets to include family "catostomidae"
 
-preliminary inspection of relationships between abundance, occurrence and covariates
+Data was taken from 2018-2019 NRSA rivers and streams dataset and cleaned to include environmental site, fish abundance, and reference condition data for the *Catostomidae* family. Only reference sites were used for analysis and was parititioned into sites used for construction (C) and sites used for validation (V). An equivalent dataframe was also created, changing fish abundance to presence/absence for analysis. Preliminary inspection of relationships between abundance, occurance and covariates were performed using GLMs and temperature and erosivity were selected for analysis as they would potentially influence trait data in following chapters. 
 
-subset data to model using temperature and erosion as covariates, both of which influence the trait data used in subsequent chapters
+```{r}
+#### GLMs to explore white sucker presence and temperature/erosivity
+tempoccurance <- glm(white.sucker ~ ws_temp, data = data_C, family = binomial(link = 'logit'))
+# summary(tempoccurance)
 
-select white suckers to model and binding together longitude and latitude as spatial random effect
+erodoccurance <- glm(white.sucker ~ erod_ws, data = data_C, family = binomial(link = 'logit'))
+# summary(erodoccurance)
+```
 
-setup probit model for occurrence data due to abundance lognormal poisson model convergence being unsatisfactory
 
-compute MCMC using the following parameters
+White suckers were chosen as the single species to model due to their wide range across sites with varying environmental covariate values. A single species distribution model was then built using the Hmsc package following the framework from Chapter 5 of *Joint Species Distribution Modelling with Applications in R* by Ovaskainen and Abrego. Longitude and latitude coordinates of sites was used as a spatial random effect and a probit model for occurance data was selected due to abundance data having poor MCMC convergence. MCMC was ran using the following parameters in the following code, and convergence was examined for both fixed and random effects using plots, effective sample size, and gelman's diganostic. 
 
-evaluate MCMC convergence for both beta and alpha parameters, and evaluate parameter values
+```{r}
+#### Setup model 
+XData <- data.frame(temp = data_C$ws_temp, erosion = data_C$erod_ws)
 
-compute explanatory power of the model and construct gradient plots for model predictions
+# select White Suckers to model (Catostomus commersonii)
+Y <- as.matrix(data_C$white.sucker)
+colnames(Y) <- "Catostomus_commersonii"
+# bind together coordinates to include spatial random effect
+latlong <- as.matrix(cbind(data_C$lat, data_C$long))
 
-predict distribution across validation sites and compare results
 
+studyDesign <- data.frame(site_id = as.factor(data_C$SITE_ID))
+rownames(latlong) <- studyDesign[,1]
+rL <- HmscRandomLevel(sData = latlong)
+XFormula <- ~ temp + erosion
+
+# use probit model for occurrence data
+model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, distr = "probit",
+              studyDesign = studyDesign, ranLevels = list(site_id = rL))
+
+
+# MCMC parameters
+nChains = 2
+samples = 1000
+thin = 10
+transient = 5000
+verbose = 1000
+nParallel = 2
+# MCMC sampling with first fitting models in maximum-likelihood framework
+# modelsample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
+#                            nChains = nChains, verbose = verbose, nParallel = nParallel,
+#                           initPar = "fixed effects")
+
+# MCMC evaluaion
+# plot(modelpost$Beta) # convergence looks good
+# effectiveSize(modelpost$Beta) # ESS relatively high
+# gelman.diag(modelpost$Beta, multivariate = FALSE)$psrf # relatively close to 1
+# summary(modelpost$Beta)
+```
+
+
+Explanatory power of the model was measured using AUC and Tjur R-squared, and gradient plots for model predictions were constructed. Posterior occurrence probabilities were calculated for validation reference sites to test model prediction, and accuracy was assessed using a threshold of 0.5 for presence/absence.
+
+
+
+```{r}
+#### Predict distribution in validation sites
+latlong.grid <- as.matrix(cbind(data_V$lat, data_V$long))
+XData.grid <- data.frame(temp = data_V$ws_temp, erosion = data_V$erod_ws)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
+                                 sDataNew = list(site_id = latlong.grid))
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, lat, long, ws_temp, erod_ws, white.sucker) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$white.sucker <- ifelse(posteriordata$white.sucker == 1, "present", "absent")
+names(posteriordata)[names(posteriordata) == 'white.sucker'] <- 'observed'
+names(posteriordata)[names(posteriordata) == 'Catostomus_commersonii'] <- 'post.prob'
+
+
+# accuracy of model predictions
+posteriordata$predicted <- ifelse(posteriordata$post.prob >= 0.5, "present", "absent")
+posteriordata$correct <- posteriordata$predicted == posteriordata$observed
+# mean(posteriordata$correct)
+
+```
 
 
 ## Results:
-erosion and temperature showed significance in the glm with negative associations in both temperature and erosion on species presence (list values)
 
-consistent with MCMC posterior estimates of beta parameters, over 95% of posterior distribution was negative for both covariates (list values)
+Upon preliminary analysis using GLMs, temperature showed a significant (p = 0.000737) negative relationship with white sucker presence, and erosivity had a similar result (p = 0.000443). Upon MCMC convergence, posterior estimates of beta parameters for temperature and erosivity were also negative, with over 95% of the posterior distribution below zero. The mean value for the temperature beta parameter was -0.2183 and the mean value for erosivity was -23.9539. 
 
-MCMC posterior estimates of alpha parameter for spatial random effect not satisfactory
-
-explanatory power of the model was strong (list values) and gradient plots showed negative association once again
-
-across validation sites, relatively predicted density (need help with finding actual numerical value)
-
-
-##### Figures
-
-```{r, echo = F, message=F}
-ggplot(data_C, aes(x = ws_temp, y = WHITE.SUCKER)) +
+```{r, echo = FALSE}
+ggplot(data_C, aes(x = ws_temp, y = white.sucker)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  labs(x = "temperature")
 
-ggplot(data_C, aes(x = erod_ws, y = WHITE.SUCKER)) +
+ggplot(data_C, aes(x = erod_ws, y = white.sucker)) +
   geom_point() +
-  geom_smooth(method = "lm")
-
-ggplot(data, aes(x = long, y = lat, fill = ws_temp)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
-
-
-ggplot(data, aes(x = long, y = lat, fill = erod_ws)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
-
-
+  geom_smooth(method = "lm") +
+  labs(x = "erosion")
 
 plot(modelpost$Beta)
+```
 
+MCMC convergence of the alpha parameter for spatial random effect was not satisfactory, which could potentially be explained due to the large distance between sites. However, explanatory power of the model with respect to the construction data was relatively high, with an AUC value of 0.915 and a Tjur R-squared value of 0.515. The gradient plots constructed for model predictions once again assigned a negative relationship between both temperature and erosivity on the presence of White Suckers.
 
+```{r, echo = F}
 par(mfrow  = c(1,2))
 tempGradient <- constructGradient(modelsample, focalVariable = "temp")
 temppred <- predict(modelsample, Gradient = tempGradient, expected = T)
@@ -90,34 +136,41 @@ eroGradient <- constructGradient(modelsample, focalVariable = "erosion")
 eropred <- predict(modelsample, Gradient = eroGradient, expected = T)
 plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1, showData = T)
 
+```
 
 
 
+Finally, across validation reference sites, the model predicted presence/absence of White Suckers with 65% accuracy. 
 
-ggplot(posteriordata, aes(x = long, y = lat, fill = Catostomus_commersonii)) +
+
+```{r, echo = F}
+names(posteriordata)[names(posteriordata) == 'white.sucker'] <- 'observed'
+names(posteriordata)[names(posteriordata) == 'Catostomus_commersonii'] <- 'post.prob'
+posteriordata$predicted <- ifelse(posteriordata$post.prob >= 0.5, "present", "absent")
+posteriordata$correct <- posteriordata$predicted == posteriordata$observed
+
+ggplot(posteriordata, aes(x = long, y = lat, fill = post.prob)) +
   borders("state", colour = "gray80", fill = "gray90") +
   geom_point(shape = 21, color = "black", size = 2) +
   scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50)) +
+  labs(fill = "Posterior Probability")
 
-
-ggplot(posteriordata, aes(x = long, y = lat, fill = WHITE.SUCKER)) +
+ggplot(posteriordata, aes(x = long, y = lat, fill = observed)) +
   borders("state", colour = "gray80", fill = "gray90") +
   geom_point(shape = 21, color = "black", size = 2) +
-  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50)) +
+  labs(fill = "Observed")
+
+ggplot(posteriordata, aes(x = long, y = lat, fill = correct)) +
+  borders("state", colour = "gray80", fill = "gray90") +
+  geom_point(shape = 21, color = "black", size = 2) +
+  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50)) +
+  labs(fill = "Accuracy")
 
 ```
 
 
 ##### Challenges
 
-Initial convergence of MCMC chains using abundance data was not satisfactory
-
-
-Elevation was initially represented in centimeters instead of meters
-
-
-The posterior distribution somewhat matched the distribution of the validation set
-
-
-MCMC covergence of alpha parameter spatial effect was not satisfactory
+Some of the main challenges of this analysis was the non-satisfactory convergence of MCMC with the initial abundance data. This could possibly be due to a number of factors, as there were many instances of 0 counts of species found at sites. Upon the first preliminary analysis, elevation was used as the environmental covariate, however the units of the data were wrong, which was fixed relatively quickly. MCMC convergence of the alpha parameter spatial effect was not satisfactory, and will not be used in subsequent analysis.

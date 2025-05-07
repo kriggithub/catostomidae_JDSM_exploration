@@ -167,7 +167,7 @@ plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1,
 
 
 
-# Predict distribution in validation sites                      need numerical value for predictive score
+# Predict distribution in validation sites
 latlong.grid <- as.matrix(cbind(data_V$lat, data_V$long))
 XData.grid <- data.frame(temp = data_V$ws_temp, erosion = data_V$erod_ws)
 Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
