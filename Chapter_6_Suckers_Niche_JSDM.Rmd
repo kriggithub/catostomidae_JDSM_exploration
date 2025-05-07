@@ -1,123 +1,132 @@
 ---
-title: "Ch. 5: Distribution of White Suckers"
+title: "Ch. 6: Suckers' Niche JDSM"
 author: "Kurt Riggin"
 output: html_document
-date: "2025-05-01"
+date: "2025-05-05"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(Hmsc)
-library(mapview)
-library(abind)
+library(ape)
 library(tidyverse)
-library(ggspatial)
-library(glmmTMB)
-load("~/R/catostomidae_JDSM_exploration/Chapter_5_Workspace.RData")
+library(Hmsc)
+library(abind)
+load("~/R/catostomidae_JDSM_exploration/Chapter_6_Workspace.RData")
 ```
 
-## Question: How does temperature and erosivity impact the distribution of White Suckers across Northeastern United States?
+## Question: How does temperature and species niches impact the distribution of Suckers across Northeastern United States?
 
 
 ## Methods: 
-data cleaning and curation for environmental, site, abundance, filtering from NRSA 2018-2019 data sets to include family "catostomidae"
 
-preliminary inspection of relationships between abundance, occurrence and covariates
+The same data set taken from Chapter 5 that includes species presence, fixed environmental variables, and site reference condition was used in this analysis. Additionally, trait data taken from Frimpong and Angermeier (2008) was subsetted to include data on temperature tolerance (minimum and maximum temperature), substrate types, and stream current speed for 23 out of 28 species in the original data set mentioned previously. Of those 23, 3 were missing data on temperature tolerance, setting the effective species amount to 20. A phylogeny was also constructed from a mitochondrial genome data set accessed from GenBank following a paper by Yang, Mayden & Naylor (2024), which only included 13 out of 28 species in the original dataset. These 13 species were included in all 3 datasets with matching scientific names, and were thus used in the analysis. 
 
-subset data to model using temperature and erosion as covariates, both of which influence the trait data used in subsequent chapters
 
-select white suckers to model and binding together longitude and latitude as spatial random effect
+```{r, echo = F}
+plot(tree)
+```
 
-setup probit model for occurrence data due to abundance lognormal poisson model convergence being unsatisfactory
 
-compute MCMC using the following parameters
 
-evaluate MCMC convergence for both beta and alpha parameters, and evaluate parameter values
+Significant data wrangling was performed to match species names between the phylogeny, trait data, and original data set. A joint species distribution model was then built using the Hmsc package following the framework from Chapter 6 of *Joint Species Distribution Modelling with Applications in R* by Ovaskainen and Abrego. Temperature was selected as the environmental covariate and temperature tolerance was also selected as a trait related to this variable. MCMC was ran using the following parameters in the following code, and convergence was examined for both fixed and random effects using plots, effective sample size, and gelman's diganostic. 
 
-compute explanatory power of the model and construct gradient plots for model predictions
 
-predict distribution across validation sites and compare results
+```{r, message = F}
+####Setup model
+Y <- as.matrix(data_C %>% select(carpiodes.carpio:moxostoma.rupiscartes))
+XData <- data.frame(temp = data_C$ws_temp)
+TrData <- data.frame(temptol = traits$MAXTEMP)
+
+rownames(TrData) <- matchedscinames #rownames of TrData must match species names
+
+studyDesign <- data.frame(site_id = as.factor(data_C$SITE_ID))
+rL <- HmscRandomLevel(units = studyDesign$site_id)
+
+XFormula <- ~ temp
+TrFormula <- ~ temptol
+
+
+model <- Hmsc(Y = Y, XData = XData, XFormula = XFormula, TrData = TrData, TrFormula = TrFormula,
+              phyloTree = tree, distr = "probit", studyDesign = studyDesign, ranLevels = list(site_id = rL))
+
+nChains = 2
+samples = 1000
+thin = 50
+transient = 5000
+verbose = 1000
+nParallel = 2
+# modelsample <- sampleMcmc(model, thin = thin, samples = samples, transient = transient,
+#                           nChains = nChains, verbose = verbose, nParallel = nParallel,
+#                           initPar = "fixed effects")
+
+```
+
+
+Finally the model's predictive power was assessed using the validation set of reference sites by summing the occurrence probabilities across posterior distributions for species and using the mean of the summed distribution as a measure of "expected" values. The expected value was then compared to the observed amount of species by summing probabilities across sites, leading to an observed/expected score for analysis.
+
+
+```{r, message = FALSE, warning = FALSE}
+####Validate model predictions
+# setup predictions for validation dataset
+studyDesign2 <- data.frame(site_id = as.factor(data_V$SITE_ID))
+rL2 <- HmscRandomLevel(units = studyDesign$site_id)
+XData.grid <- data.frame(temp = data_V$ws_temp)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
+                                 sDataNew = list(site_id = rL))
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+data_V$observed <- rowSums(data_V[, 17:29])
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, ws_temp, observed) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$expected <- rowSums(posteriordata[, 3:15])
+posteriordata$oe <- posteriordata$observed/posteriordata$expected
+```
+
+
+
+
 
 
 
 ## Results:
-erosion and temperature showed significance in the glm with negative associations in both temperature and erosion on species presence (list values)
-
-consistent with MCMC posterior estimates of beta parameters, over 95% of posterior distribution was negative for both covariates (list values)
-
-MCMC posterior estimates of alpha parameter for spatial random effect not satisfactory
-
-explanatory power of the model was strong (list values) and gradient plots showed negative association once again
-
-across validation sites, relatively predicted density (need help with finding actual numerical value)
 
 
-##### Figures
+MCMC convergence diagnostics for the model were not satisfactory, even among changing model parameters to allow for much longer computing time. This was most likely due to the fact that the subsetted data was very sparse among certain species, and thus more difficult to pull a posterior distriubtion sample from. 
 
 ```{r, echo = F, message=F}
-ggplot(data_C, aes(x = ws_temp, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
 
-ggplot(data_C, aes(x = erod_ws, y = WHITE.SUCKER)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-
-ggplot(data, aes(x = long, y = lat, fill = ws_temp)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
-
-
-ggplot(data, aes(x = long, y = lat, fill = erod_ws)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-95, -65), ylim = c(32, 50))
-
-
-
-plot(modelpost$Beta)
-
-
-par(mfrow  = c(1,2))
-tempGradient <- constructGradient(modelsample, focalVariable = "temp")
-temppred <- predict(modelsample, Gradient = tempGradient, expected = T)
-plotGradient(modelsample, tempGradient, pred = temppred, measure = "Y", index = 1, showData = T)
-
-eroGradient <- constructGradient(modelsample, focalVariable = "erosion")
-eropred <- predict(modelsample, Gradient = eroGradient, expected = T)
-plotGradient(modelsample, eroGradient, pred = eropred, measure = "Y", index = 1, showData = T)
-
-
-
-
-
-ggplot(posteriordata, aes(x = long, y = lat, fill = Catostomus_commersonii)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  scale_fill_gradient(low = "blue", high = "red") +
-  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
-
-
-ggplot(posteriordata, aes(x = long, y = lat, fill = WHITE.SUCKER)) +
-  borders("state", colour = "gray80", fill = "gray90") +
-  geom_point(shape = 21, color = "black", size = 2) +
-  coord_fixed(xlim = c(-90, -67), ylim = c(33, 50))
+effectiveSize(modelpost$Beta)
+summary(modelpost$Beta)
 
 ```
 
 
-##### Challenges
 
-Initial convergence of MCMC chains using abundance data was not satisfactory
-
-
-Elevation was initially represented in centimeters instead of meters
+Finally, although model convergence was not satisfactory, the model gave validation sites a mean observed/expected value of 0.199. A majority of the sites selected did not have any presence of any species used in model building, which caused a skew in the O/E values towards 0.
 
 
-The posterior distribution somewhat matched the distribution of the validation set
+```{r, echo = F, message=F}
+
+ggplot(posteriordata, aes(y = oe)) +
+  geom_boxplot()
+
+hist(posteriordata$oe)
+```
 
 
-MCMC covergence of alpha parameter spatial effect was not satisfactory
+
+
+
+
+## Challenges:
+
+The data wrangling in particular for this model was particularly lengthy. This was mainly due to the fact of having to match species names in the phylogeny, trait data, and community datasets. Even after careful curation of the data, upon a final analysis, there are still species not included due to a single character difference (phylogeny data has White suckers as Catostomus commersonii whereas community dataset has it as Catostomus commersoni). Rerunning this analysis while looking at all possible typos and mismatched data may be worthwhile as the wrangling took longer than the model building itself. A helpful YouTube video about the model capabilities as well as some provided R scripts can be found here, which was loosely used as a guideline for formatting the data (https://www.youtube.com/watch?v=u07eFE3Uqtg&t=1445s&ab_channel=EarthLabCUBoulder). Another clear challenge was the dependency of matched data causing the data used for the analysis to shrink, which impacted what we could get out of the model. A good next step would be to implement a taxonomy as opposed to a phylogeny to see what species would still be left in the analysis and how that could impact our results.
+
+
+
+
+
+

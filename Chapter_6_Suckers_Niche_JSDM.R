@@ -93,14 +93,53 @@ plotGradient(modelsample, Gradient = Gradient, pred = predY, measure = "T", inde
 
 
 
-VP <- computeVariancePartitioning(modelsample, group = c(1,1), groupnames = "temp")
+VP <- computeVariancePartitioning(modelsample)
 VP
+
+
+
+
+
+####Validate model predictions
+# setup predictions for validation dataset
+studyDesign2 <- data.frame(site_id = as.factor(data_V$SITE_ID))
+rL2 <- HmscRandomLevel(units = studyDesign$site_id)
+XData.grid <- data.frame(temp = data_V$ws_temp)
+Gradient.grid <- prepareGradient(modelsample, XDataNew = XData.grid,
+                                 sDataNew = list(site_id = rL))
+predYnr <- predict(modelsample, Gradient = Gradient.grid)
+
+
+
+# posterior occurrence probability for each site
+EpredY <- as.data.frame(apply(abind(predYnr, along = 3), c(1,2), mean))
+data_V$observed <- rowSums(data_V[, 17:29])
+EpredY$SITE_ID <- data_V$SITE_ID
+posteriordata <- data_V %>% select(SITE_ID, ws_temp, observed) %>% left_join(EpredY, by = "SITE_ID")
+posteriordata$expected <- rowSums(posteriordata[, 3:15])
+posteriordata$oe <- posteriordata$observed/posteriordata$expected
+
+mean(posteriordata$oe)
+
+
+ggplot(posteriordata, aes(y = oe)) +
+  geom_boxplot()
+
+hist(posteriordata$oe)
 
 
 
 # give a sense of what we were missing from each trait from and also phylogeny (what trait and what percent of species were missing)
 # give the taxonomy a try instead of phylogeny
 
+
+# of the 28 species in original data set, only 23 had data on temperature tolerance or substrate/current preference, and of those, 3 did not have temperature tolerance data
+
+
+# phylogeny only had 13 of the original 28 species from the dataset, looking back seems like there are small speeling differences like ii vs i for white suckers (Caotsomtus commersonii)
+
+
+# limiting factor might be phylogeny
 
 
 # given the issue of subsetting everything

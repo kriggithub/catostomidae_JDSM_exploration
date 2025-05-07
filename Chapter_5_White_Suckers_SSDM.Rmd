@@ -171,6 +171,6 @@ ggplot(posteriordata, aes(x = long, y = lat, fill = correct)) +
 ```
 
 
-##### Challenges
+## Challenges:
 
 Some of the main challenges of this analysis was the non-satisfactory convergence of MCMC with the initial abundance data. This could possibly be due to a number of factors, as there were many instances of 0 counts of species found at sites. Upon the first preliminary analysis, elevation was used as the environmental covariate, however the units of the data were wrong, which was fixed relatively quickly. MCMC convergence of the alpha parameter spatial effect was not satisfactory, and will not be used in subsequent analysis.
